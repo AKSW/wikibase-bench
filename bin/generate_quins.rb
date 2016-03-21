@@ -19,11 +19,22 @@
 
 require 'set'
 
+puts 'Load items without pages'
+
+undescribed = Set.new
+
+File.open('data/undescribed-entities.csv', 'r').each do |line|
+  undescribed << line.strip
+end
+
 all = []
 
 puts "Reading quins"
 File.open('data/quins-all.csv', 'r').each do |line|
-  all << line.split(' ').map{ |x| x.strip }
+  line_data = line.split(' ').map{ |x| x.strip }
+  if (undescribed & line_data).empty?
+    all << line_data
+  end
 end
 
 puts "readed #{all.size} quins"
