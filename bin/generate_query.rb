@@ -445,3 +445,19 @@ def query(mode, pattern, quin, limit)
     end
   end
 end
+
+def pretify(query_string)
+  query_string.gsub(/\n      /,"\n").strip
+end
+
+pattern = '00001'
+unless File.exists? "queries/quins-#{pattern}"
+  system "mkdir queries/quins-#{pattern}"
+end
+i = 1
+File.open("data/quin-patterns-#{pattern}.csv", 'r').each do |line|
+  out = File.open(File.join("queries","quins-#{pattern}","query-%03i.sparql" % i), 'w')
+  out.puts pretify(query(:naryrel, pattern, line.split, 10000))
+  out.close
+  i += 1
+end
