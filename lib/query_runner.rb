@@ -30,6 +30,8 @@ class QueryRunner
     @http = Net::HTTP.new(URI.parse(@endpoint).host, URI.parse(@endpoint).port)
     @http.open_timeout = 60
     @http.read_timeout = @timeout.to_i
+    p @http.class
+    #@http.accept = 'application/json'
   end
 
   def run(name)
@@ -38,7 +40,7 @@ class QueryRunner
   
       begin
         t1 = Time.now
-        resp = @http.get(URI(url))
+        resp = @http.get(URI(url), {'Accept'=>'application/json'})
         t2 = Time.now
         result = {time: t2-t1, body: resp.body, status: resp.code}
       rescue RuntimeError => e
