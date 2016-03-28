@@ -142,6 +142,44 @@ def query(mode, pattern, quin, limit)
       }
       LIMIT #{limit}
       """
+    when '01100'
+      """
+      PREFIX p: <http://www.wikidata.org/prop/>
+      PREFIX ps: <http://www.wikidata.org/prop/statement/>
+      PREFIX wd: <http://www.wikidata.org/entity/>
+      SELECT ?s ?qp ?pv
+      WHERE {
+        ?s p:#{quin[1]} ?st .
+        ?st ps:#{quin[1]} wd:#{quin[2]} ; ?qp ?qv .
+        ?qp a wikibase:Property .
+      }
+      LIMIT #{limit}
+      """
+    when '01101'
+      """
+      PREFIX p: <http://www.wikidata.org/prop/>
+      PREFIX ps: <http://www.wikidata.org/prop/statement/>
+      PREFIX wd: <http://www.wikidata.org/entity/>
+      SELECT ?s ?qp ?pv
+      WHERE {
+        ?s p:#{quin[1]} ?st .
+        ?st ps:#{quin[1]} wd:#{quin[2]} ; ?qp wd:#{quin[4]} .
+        ?qp a wikibase:Property .
+      }
+      LIMIT #{limit}
+      """
+    when '01110'
+      """
+      PREFIX p: <http://www.wikidata.org/prop/>
+      PREFIX ps: <http://www.wikidata.org/prop/statement/>
+      PREFIX wd: <http://www.wikidata.org/entity/>
+      SELECT ?s ?qp ?pv
+      WHERE {
+        ?s p:#{quin[1]} ?st .
+        ?st ps:#{quin[1]} wd:#{quin[2]} ; p:#{quin[3]} ?qv .
+      }
+      LIMIT #{limit}
+      """
     when '01111'
       """
       PREFIX p: <http://www.wikidata.org/prop/>
@@ -237,7 +275,7 @@ def query(mode, pattern, quin, limit)
       PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX wd: <http://www.wikidata.org/entity/>
       PREFIX p: <http://www.wikidata.org/prop/>
-      SELECT ?p
+      SELECT ?p ?qv
       WHERE {
         wd:#{quin[0]} ?p ?st .
         ?st ?pv wd:#{quin[2]} ; p:#{quin[3]} ?qv .
@@ -250,7 +288,7 @@ def query(mode, pattern, quin, limit)
       PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX wd: <http://www.wikidata.org/entity/>
       PREFIX p: <http://www.wikidata.org/prop/>
-      SELECT ?s ?p
+      SELECT ?p
       WHERE {
         ?s ?p ?st .
         ?st ?pv wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
@@ -305,6 +343,44 @@ def query(mode, pattern, quin, limit)
       WHERE {
         wd:#{quin[0]} p:#{quin[1]} ?st .
         ?st ps:#{quin[1]} ?o ; p:#{quin[3]} wd:#{quin[4]} .
+      }
+      LIMIT #{limit}
+      """
+    when '11100'
+      """
+      PREFIX p: <http://www.wikidata.org/prop/>
+      PREFIX ps: <http://www.wikidata.org/prop/statement/>
+      PREFIX wd: <http://www.wikidata.org/entity/>
+      SELECT ?qp ?qv
+      WHERE {
+        wd:#{quin[0]} p:#{quin[1]} ?st .
+        ?st ps:#{quin[1]} ?o ; ?qp ?qv .
+        ?qp a wikibase:Property .
+      }
+      LIMIT #{limit}
+      """
+    when '11101'
+      """
+      PREFIX p: <http://www.wikidata.org/prop/>
+      PREFIX ps: <http://www.wikidata.org/prop/statement/>
+      PREFIX wd: <http://www.wikidata.org/entity/>
+      SELECT ?qp
+      WHERE {
+        wd:#{quin[0]} p:#{quin[1]} ?st .
+        ?st ps:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
+        ?qp a wikibase:Property .
+      }
+      LIMIT #{limit}
+      """
+    when '11110'
+      """
+      PREFIX p: <http://www.wikidata.org/prop/>
+      PREFIX ps: <http://www.wikidata.org/prop/statement/>
+      PREFIX wd: <http://www.wikidata.org/entity/>
+      SELECT ?qv
+      WHERE {
+        wd:#{quin[0]} p:#{quin[1]} ?st .
+        ?st ps:#{quin[1]} ?o ; p:#{quin[3]} ?qv .
       }
       LIMIT #{limit}
       """
@@ -450,14 +526,16 @@ def pretify(query_string)
   query_string.gsub(/\n      /,"\n").strip
 end
 
-pattern = '00001'
-unless File.exists? "queries/quins-#{pattern}"
-  system "mkdir queries/quins-#{pattern}"
-end
-i = 1
-File.open("data/quin-patterns-#{pattern}.csv", 'r').each do |line|
-  out = File.open(File.join("queries","quins-#{pattern}","query-%03i.sparql" % i), 'w')
-  out.puts pretify(query(:naryrel, pattern, line.split, 10000))
-  out.close
-  i += 1
+mode = :naryrel
+(1..31).map{ |x| "%05b" % x }.each do |pattern|
+  puts "Genering queries for #{pattern} (#{mode})"
+  dir = File.join('queries',"quins-#{mode}-#{pattern}")
+  system "mkdir #{dir}" unless File.exists? dir
+  i = 1
+  File.open("data/quin-patterns-#{pattern}.csv", 'r').each do |line|
+    out = File.open(File.join(dir,"query-%03i.sparql" % i), 'w')
+    out.puts pretify(query(:naryrel, pattern, line.split, 10000))
+    out.close
+    i += 1
+  end
 end
