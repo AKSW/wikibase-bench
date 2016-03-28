@@ -9,7 +9,7 @@ def virtuoso_run(script, mode)
   LOG.flush
   stime = Time.now
   system "isql 1111 dba dba VERBOSE=OFF #{script}"
-  etime = Time.now - time
+  etime = Time.now - stime
   LOG.puts "Ellapsed time: #{etime} seconds"
   LOG.flush
 end
