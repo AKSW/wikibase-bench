@@ -30,8 +30,6 @@ class QueryRunner
     @http = Net::HTTP.new(URI.parse(@endpoint).host, URI.parse(@endpoint).port)
     @http.open_timeout = 60
     @http.read_timeout = @timeout.to_i
-    p @http.class
-    #@http.accept = 'application/json'
   end
 
   def run(name)
