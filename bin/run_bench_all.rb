@@ -1,56 +1,45 @@
 #!/usr/bin/env ruby
 
-require 'erb'
-require 'net/http'
 require 'csv'
+require "#{File.dirname(File.dirname(File.expand_path(__FILE__)))}/lib/wikidata.rb"
 
-include ERB::Util
-
-def run_query(endpoint, file, timeout)
-  # Setup http
-  http = Net::HTTP.new(URI.parse(endpoint).host, URI.parse(endpoint).port)
-  http.open_timeout = 60
-  http.read_timeout = @timeout.to_i
-  http['Accept'] = 'application/json'
-
-  # Setup query
-  query = ''
-  File.new(file).each_line do |line|
-    query << (line.strip + ' ') unless /^#/ === line
-  end
-  query.strip!
-
-  # Execute the query
-  url = "#{endpoint}?query=#{url_encode(query)}"
-  begin
-    t1 = Time.now
-    resp = @http.get(URI(url))
-    t2 = Time.now
-    result = {time: t2-t1, body: resp.body, status: resp.code}
-  rescue RuntimeError => e
-    result = {time: 'timeout', error: e}
-  end
+if ARGV.size != 2
+  print "Usage: run_bench_all.rb <limit> <queries>"
+  exit 1
 end
 
-log_csv  = File.new('experiment_log.csv', 'a')
+LIMIT   = ARGV[0].to_i
+QUERIES = ARGV[1].to_i
 
+log_csv  = File.new('run_bench_all_log.csv', 'a')
+
+quins = Wikidata.read_quins(File.join('data', "quins-all.csv"))
 endpoint = "http://localhost:8000/sparql/"
-mode = :naryrel
-(1..31).map{ |x| "%05b" % x }.each do |mask|
-  puts "Running bench for #{mask} (#{mode})"
+schema = :naryrel
+(1..31).each do |i|
+  mask = "%05b" % i
+  puts "Running bench for #{mask} (#{schema})"
 
   # Start server
+  puts "Starting server #{schema} #{mask} #{1+i%2}"
+  STDOUT.flush
+  system "cd /usr/local/virtuoso-opensource/var/lib/virtuoso/db-#{schema}-#{1+i%2} && virtuoso-t"
   sleep 60
 
-  # Run benchmark
-  Dir[File.join('queries',"quins-#{mode}-#{mask}", '*.sparlq')].each do |file|
-    result = run_query(endpoint, file, 60)
-
-    log_csv.puts [file, result[:time], solutions, result[:status]].to_csv
+  start = 500*(i-1)
+  (start...(start+QUERIES)).each do |j|
+    puts "Executing query #{schema} #{mask} #{j}"
+    query = Wikidata::generate_query(schema, mask, quins[j], LIMIT)
+    result = Wikidata::run_query(endpoint, query, 60)
+    array = [schema,mask,j,result[:time],nil,result[:status]]
+    array[4] = Wikidata::solutions(result) if result[:status] == '200'
+    log_csv.puts array.to_csv
     log_csv.flush
   end
-
+  
   # Stop server
-  sytem 'pidof virtuoso-t | xargs kill'
+  puts 'Stoping server'
+  STDOUT.flush
+  system 'pidof virtuoso-t | xargs kill'
   sleep 60
 end
