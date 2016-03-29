@@ -109,6 +109,7 @@ def query(mode, pattern, quin, limit)
       """
     when '01001'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
@@ -145,6 +146,7 @@ def query(mode, pattern, quin, limit)
       """
     when '01100'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
@@ -158,6 +160,7 @@ def query(mode, pattern, quin, limit)
       """
     when '01101'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
@@ -299,6 +302,7 @@ def query(mode, pattern, quin, limit)
       """
     when '11000'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
@@ -312,13 +316,14 @@ def query(mode, pattern, quin, limit)
       """
     when '11001'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?o ?qp
       WHERE {
-        wd:#{quin[0]} ps:#{quin[1]} _:st .
-        _:st psv:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -349,6 +354,7 @@ def query(mode, pattern, quin, limit)
       """
     when '11100'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
@@ -362,6 +368,7 @@ def query(mode, pattern, quin, limit)
       """
     when '11101'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
