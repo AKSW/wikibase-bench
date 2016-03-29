@@ -92,7 +92,7 @@ module Wikidata
   end
 
   # Generate a query from a quin
-  def self.query(mode, mask, quin, limit)
+  def self.generate_query(mode, mask, quin, limit)
     case mode
     when :naryrel
       generate_query_naryrel(mask, quin, limit)
