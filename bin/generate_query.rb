@@ -10,8 +10,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?p ?o ?qp
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv ?o ; ?qp wd:#{quin[4]} .
+        ?s ?p _:st .
+        _:st ?pv ?o ; ?qp wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
         ?qp a wikibase:Property .
       }
@@ -23,8 +23,8 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?p ?o ?qv
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv ?o ; p:#{quin[3]} ?qv .
+        ?s ?p _:st .
+        _:st ?pv ?o ; p:#{quin[3]} ?qv .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -36,8 +36,8 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?p ?o
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv ?o ; p:#{quin[3]} wd:#{quin[4]} .
+        ?s ?p _:st .
+        _:st ?pv ?o ; p:#{quin[3]} wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -48,8 +48,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?p ?qp ?qv
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; ?qp ?qv .
+        ?s ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; ?qp ?qv .
         ?p wikibase:propertyValue ?pv .
         ?qp a wikibase:Property .
       }
@@ -61,8 +61,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?p ?qp
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; ?qp wd:#{quin[4]} .
+        ?s ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; ?qp wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
         ?qp a wikibase:Property .
       }
@@ -75,8 +75,8 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?p
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; p:#{quin[3]} ?qv .
+        ?s ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; p:#{quin[3]} ?qv .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -88,8 +88,8 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?p
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
+        ?s ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -100,8 +100,8 @@ def query(mode, pattern, quin, limit)
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       SELECT ?s ?o ?qp ?qv
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; ?qp ?qv .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; ?qp ?qv .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -113,8 +113,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?o ?qp
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -125,8 +125,8 @@ def query(mode, pattern, quin, limit)
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       SELECT ?s ?o ?qv
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; p:#{quin[3]} ?qv .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; p:#{quin[3]} ?qv .
       }
       LIMIT #{limit}
       """
@@ -137,8 +137,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?o
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; p:#{quin[3]} wd:#{quin[4]} .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; p:#{quin[3]} wd:#{quin[4]} .
       }
       LIMIT #{limit}
       """
@@ -149,8 +149,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?qp ?pv
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} wd:#{quin[2]} ; ?qp ?qv .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} wd:#{quin[2]} ; ?qp ?qv .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -162,8 +162,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?qp ?pv
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} wd:#{quin[2]} ; ?qp wd:#{quin[4]} .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} wd:#{quin[2]} ; ?qp wd:#{quin[4]} .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -175,8 +175,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?qp ?pv
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} wd:#{quin[2]} ; p:#{quin[3]} ?qv .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} wd:#{quin[2]} ; p:#{quin[3]} ?qv .
       }
       LIMIT #{limit}
       """
@@ -187,8 +187,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s
       WHERE {
-        ?s p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
+        ?s p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
       }
       LIMIT #{limit}
       """
@@ -198,8 +198,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?p ?o ?qp ?qv
       WHERE {
-        wd:#{quin[0]} ?p ?st .
-        ?st ?pv ?o ; ?qp ?qv .
+        wd:#{quin[0]} ?p _:st .
+        _:st ?pv ?o ; ?qp ?qv .
         ?p wikibase:propertyValue ?pv .
         ?qp a wikibase:Property .
       }
@@ -211,8 +211,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?p ?o ?qp
       WHERE {
-        wd:#{quin[0]} ?p ?st .
-        ?st ?pv ?o ; ?qp wd:#{quin[4]} .
+        wd:#{quin[0]} ?p _:st .
+        _:st ?pv ?o ; ?qp wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
         ?qp a wikibase:Property .
       }
@@ -225,8 +225,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?p ?o ?qp
       WHERE {
-        wd:#{quin[0]} ?p ?st .
-        ?st ?pv ?o ; p:#{quin[3]} ?qv .
+        wd:#{quin[0]} ?p _:st .
+        _:st ?pv ?o ; p:#{quin[3]} ?qv .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -238,8 +238,8 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?p ?o
       WHERE {
-        wd:#{quin[0]} ?p ?st .
-        ?st ?pv ?o ; p:#{quin[3]} wd:#{quin[4]} .
+        wd:#{quin[0]} ?p _:st .
+        _:st ?pv ?o ; p:#{quin[3]} wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -250,8 +250,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?p ?qp ?qv
       WHERE {
-        wd:#{quin[0]} ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; ?qp ?qv .
+        wd:#{quin[0]} ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; ?qp ?qv .
         ?p wikibase:propertyValue ?pv .
         ?qp a wikibase:Property .
       }
@@ -263,8 +263,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?p ?qp
       WHERE {
-        wd:#{quin[0]} ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; ?qp wd:#{quin[4]} .
+        wd:#{quin[0]} ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; ?qp wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
         ?qp a wikibase:Property .
       }
@@ -277,8 +277,8 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?p ?qv
       WHERE {
-        wd:#{quin[0]} ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; p:#{quin[3]} ?qv .
+        wd:#{quin[0]} ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; p:#{quin[3]} ?qv .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -290,8 +290,8 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?p
       WHERE {
-        ?s ?p ?st .
-        ?st ?pv wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
+        ?s ?p _:st .
+        _:st ?pv wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
         ?p wikibase:propertyValue ?pv .
       }
       LIMIT #{limit}
@@ -303,8 +303,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?o ?qp ?qv
       WHERE {
-        wd:#{quin[0]} p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; ?qp ?qv .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; ?qp ?qv .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -316,8 +316,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?o ?qp
       WHERE {
-        wd:#{quin[0]} ps:#{quin[1]} ?st .
-        ?st psv:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
+        wd:#{quin[0]} ps:#{quin[1]} _:st .
+        _:st psv:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -329,8 +329,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?o ?qv
       WHERE {
-        wd:#{quin[0]} p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; p:#{quin[3]} ?qv .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; p:#{quin[3]} ?qv .
       }
       LIMIT #{limit}
       """
@@ -341,8 +341,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?o
       WHERE {
-        wd:#{quin[0]} p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; p:#{quin[3]} wd:#{quin[4]} .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; p:#{quin[3]} wd:#{quin[4]} .
       }
       LIMIT #{limit}
       """
@@ -353,8 +353,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?qp ?qv
       WHERE {
-        wd:#{quin[0]} p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; ?qp ?qv .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; ?qp ?qv .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -366,8 +366,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?qp
       WHERE {
-        wd:#{quin[0]} p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; ?qp wd:#{quin[4]} .
         ?qp a wikibase:Property .
       }
       LIMIT #{limit}
@@ -379,8 +379,8 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?qv
       WHERE {
-        wd:#{quin[0]} p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} ?o ; p:#{quin[3]} ?qv .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} ?o ; p:#{quin[3]} ?qv .
       }
       LIMIT #{limit}
       """
@@ -389,10 +389,10 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       PREFIX wd: <http://www.wikidata.org/entity/>
-      ASK
+      SELECT *
       WHERE {
-        wd:#{quin[0]} p:#{quin[1]} ?st .
-        ?st ps:#{quin[1]} wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
+        wd:#{quin[0]} p:#{quin[1]} _:st .
+        _:st ps:#{quin[1]} wd:#{quin[2]} ; p:#{quin[3]} wd:#{quin[4]} .
       }
       """
     end
@@ -403,9 +403,9 @@ def query(mode, pattern, quin, limit)
       PREFIX wd: <http://www.wikidata.org/entity/>
       SELECT ?s ?p ?o ?qp
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s ?p ?o .
-          ?st ?qp wd:#{quin[4]} .
+          _:st ?qp wd:#{quin[4]} .
           ?qp a wikibase:Property .
         }
       }
@@ -416,9 +416,9 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?p ?o ?qv
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s ?p ?o .
-          ?st p:#{quin[3]} ?qv .
+          _:st p:#{quin[3]} ?qv .
         }
       }
       LIMIT #{limit}
@@ -429,9 +429,9 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?p ?o
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s ?p ?o .
-          ?st :#{quin[3]} wd:#{quin[4]} .
+          _:st :#{quin[3]} wd:#{quin[4]} .
         }
       }
       LIMIT #{limit}
@@ -442,9 +442,9 @@ def query(mode, pattern, quin, limit)
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       SELECT ?s ?p ?qp ?qv
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s ?p wd:#{quin[2]} .
-          ?st ?qp ?qv .
+          _:st ?qp ?qv .
           ?qp a wikibase:Property .
         }
       }
@@ -456,9 +456,9 @@ def query(mode, pattern, quin, limit)
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       SELECT ?s ?p ?qp
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s ?p wd:#{quin[2]} .
-          ?st ?qp wd:#{quin[4]} .
+          _:st ?qp wd:#{quin[4]} .
           ?qp a wikibase:Property .
         }
       }
@@ -470,9 +470,9 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?p
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s ?p wd:#{quin[2]} .
-          ?st p:#{quin[3]} wd:#{quin[4]} .
+          _:st p:#{quin[3]} wd:#{quin[4]} .
         }
       }
       LIMIT #{limit}
@@ -483,9 +483,9 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?o ?qp ?qv
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s p:#{quin[1]} ?o .
-          ?st ?qp ?qv .
+          _:st ?qp ?qv .
         }
         ?qp a wikibase:Property .
       }
@@ -498,9 +498,9 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?o ?qp
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s p:#{quin[1]} ?o .
-          ?st ?qp wd:#{quin[4]} .
+          _:st ?qp wd:#{quin[4]} .
         }
         ?qp a wikibase:Property .
       }
@@ -511,9 +511,9 @@ def query(mode, pattern, quin, limit)
       PREFIX p: <http://www.wikidata.org/prop/>
       SELECT ?s ?o ?qv
       WHERE {
-        GRAPH ?st {
+        GRAPH _:st {
           ?s p:#{quin[1]} ?o .
-          ?st p:#{quin[3]} ?qv .
+          _:st p:#{quin[3]} ?qv .
         }
       }
       LIMIT #{limit}
