@@ -96,6 +96,7 @@ def query(mode, pattern, quin, limit)
       """
     when '01000'
       """
+      PREFIX wikibase: <http://wikiba.se/ontology-beta#>
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX ps: <http://www.wikidata.org/prop/statement/>
       SELECT ?s ?o ?qp ?qv
