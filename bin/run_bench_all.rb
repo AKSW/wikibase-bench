@@ -24,7 +24,7 @@ schema = :naryrel
   puts "Starting server #{schema} #{mask} #{1+i%2}"
   STDOUT.flush
   system "cd /usr/local/virtuoso-opensource/var/lib/virtuoso/db-#{schema}-#{1+i%2} && virtuoso-t"
-  sleep 60
+  sleep 180
 
   start = 500*(i-1)
   (start...(start+QUERIES)).each do |j|
