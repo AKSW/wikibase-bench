@@ -15,7 +15,7 @@ log_csv  = File.new('run_bench_all_log.csv', 'a')
 
 quins = Wikidata.read_quins(File.join('data', "quins-all.csv"))
 endpoint = "http://localhost:8000/sparql/"
-schema = :naryrel
+schema = :ngraphs # :naryrel
 (1..31).each do |i|
   mask = "%05b" % i
   puts "Running bench for #{mask} (#{schema})"
