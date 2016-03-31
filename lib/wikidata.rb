@@ -119,17 +119,19 @@ module Wikidata
     query += '{ '
 
     # Pattern variables
+    c  = ((mask[0] == '0') ? '?c'  : "_:c")
     s  = ((mask[0] == '0') ? '?s'  : "wd:#{quin[0]}")
     p  = ((mask[1] == '0') ? '?p'  : "p:#{quin[1]}")
     o  = ((mask[2] == '0') ? '?o'  : "wd:#{quin[2]}")
     q  = ((mask[3] == '0') ? '?q'  : "p:#{quin[3]}")
     qo = ((mask[4] == '0') ? '?qo' : "wd:#{quin[4]}")
-    query += "GRAPH _:st { #{s} #{p} #{o} . _:st #{q} #{qo} } . "
+    query += "GRAPH #{c} { #{s} #{p} #{o} . #{c} #{q} #{qo} } . "
 
     # Aditional restrictions
     query += "#{p} a wikibase:Property . " if mask[1] == '0'
     query += "#{q} a wikibase:Property . " if mask[3] == '0'
-
+    query += "FILTER (#{s} != #{c}) " if mask[0] == '0'
+    
     # Limit
     query += "} LIMIT #{limit}"
   end
