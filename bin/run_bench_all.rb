@@ -35,7 +35,17 @@ schemas.each do |schema|
     # Start server
     puts "Starting server #{schema} #{mask} #{1+i%2}"
     STDOUT.flush
-    system "cd /usr/local/virtuoso-opensource/var/lib/virtuoso/db-#{schema}-#{1+i%2} && virtuoso-t"
+    case schema
+    when :naryrel, :onaryrel
+      db = :naryrel
+    when :ngraphs, :ongraphs
+      db = :ngraphs
+    when :sgprop, :osgprop
+      db = :sgprop
+    when :stdreif, :ostdreif
+      db = :stdreif
+    end 
+    system "cd /usr/local/virtuoso-opensource/var/lib/virtuoso/db-#{db}-#{1+i%2} && virtuoso-t"
     sleep 180
 
     start = 500*(i-1)
