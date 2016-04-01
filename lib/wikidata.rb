@@ -43,25 +43,29 @@ module Wikidata
     end
   end
 
-  # Generate a naryrel query from a quin
-  def self.generate_query_naryrel(mask, quin, limit)
+  def self.prefixes(schema, mask)
     query = ''
-
-    # Prefixes
-    if mask[1] == '0' or mask[3] == '0'
-      query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
+    if [:naryrel, :onaryrel, :ngraphs, :ongraphs].include? schema
+      if mask[1] == '0' or mask[3] == '0'
+	query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
+      end
+      if mask[0] == '1' or mask[2] == '1' or mask[4] == '1'
+	query += 'PREFIX wd: <http://www.wikidata.org/entity/> '
+      end
+      if mask[1] == '1' or mask[3] == '1'
+	query += 'PREFIX p: <http://www.wikidata.org/prop/> '
+      end
     end
-    if mask[0] == '1' or mask[2] == '1' or mask[4] == '1'
-      query += 'PREFIX wd: <http://www.wikidata.org/entity/> '
+    if [:naryrel, :onaryrel].include? schema
+      if mask[1] == '1'
+	query += 'PREFIX ps: <http://www.wikidata.org/prop/statement/> '
+      end
     end
-    if mask[1] == '1' or mask[3] == '1'
-      query += 'PREFIX p: <http://www.wikidata.org/prop/> '
-    end
-    if mask[1] == '1'
-      query += 'PREFIX ps: <http://www.wikidata.org/prop/statement/> '
-    end
-    
-    # Select clause
+    query
+  end
+  
+  def self.select_variables(mask)
+    query = ''
     query += 'SELECT '
     if mask == '11111'
       query += '* '
@@ -72,78 +76,96 @@ module Wikidata
       query += '?q '  if mask[3] == '0'
       query += '?qo ' if mask[4] == '0'
     end
-    query += '{ '
-
-    # Pattern variables
-    s  = ((mask[0] == '0') ? '?s'  : "wd:#{quin[0]}")
-    p  = ((mask[1] == '0') ? '?p'  : "p:#{quin[1]}")
-    ps = ((mask[1] == '0') ? '?ps' : "ps:#{quin[1]}")
-    o  = ((mask[2] == '0') ? '?o'  : "wd:#{quin[2]}")
-    q  = ((mask[3] == '0') ? '?q'  : "p:#{quin[3]}")
-    qo = ((mask[4] == '0') ? '?qo' : "wd:#{quin[4]}")
-    query += "#{s} #{p} [ #{ps} #{o} ; #{q} #{qo} ] . "
-
-    # Aditional restrictions
-    query += "#{p} wikibase:propertyValue #{ps} . " if mask[1] == '0'
-    query += "#{q} a wikibase:Property . " if mask[3] == '0'
-
-    # Limit
-    query += "} LIMIT #{limit}"
+    query
   end
 
-  def self.generate_query_ngraphs(mask, quin, limit)
+  def self.query_symbols(mask, quin)
+    symbols = {}
+    symbols[:s]  = ((mask[0] == '0') ? '?s'  : "wd:#{quin[0]}")
+    symbols[:p]  = ((mask[1] == '0') ? '?p'  : "p:#{quin[1]}")
+    symbols[:ps] = ((mask[1] == '0') ? '?ps' : "ps:#{quin[1]}")
+    symbols[:o]  = ((mask[2] == '0') ? '?o'  : "wd:#{quin[2]}")
+    symbols[:q]  = ((mask[3] == '0') ? '?q'  : "p:#{quin[3]}")
+    symbols[:qo] = ((mask[4] == '0') ? '?qo' : "wd:#{quin[4]}")
+    symbols
+  end
+  
+  # Generate a graph pattern.
+  def self.graph_pattern(schema, mask, symbols)
+    s = symbols
     query = ''
-
-    # Prefixes
-    if mask[1] == '0' or mask[3] == '0'
-      query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
-    end
-    if mask[0] == '1' or mask[2] == '1' or mask[4] == '1'
-      query += 'PREFIX wd: <http://www.wikidata.org/entity/> '
-    end
-    if mask[1] == '1' or mask[3] == '1'
-      query += 'PREFIX p: <http://www.wikidata.org/prop/> '
-    end
-    
-    # Select clause
-    query += 'SELECT '
-    if mask == '11111'
-      query += '* '
-    else
-      query += '?s '  if mask[0] == '0'
-      query += '?p '  if mask[1] == '0'
-      query += '?o '  if mask[2] == '0'
-      query += '?q '  if mask[3] == '0'
-      query += '?qo ' if mask[4] == '0'
-    end
-    query += '{ '
-
-    # Pattern variables
-    c  = ((mask[0] == '0') ? '?c'  : "_:c")
-    s  = ((mask[0] == '0') ? '?s'  : "wd:#{quin[0]}")
-    p  = ((mask[1] == '0') ? '?p'  : "p:#{quin[1]}")
-    o  = ((mask[2] == '0') ? '?o'  : "wd:#{quin[2]}")
-    q  = ((mask[3] == '0') ? '?q'  : "p:#{quin[3]}")
-    qo = ((mask[4] == '0') ? '?qo' : "wd:#{quin[4]}")
-    query += "GRAPH #{c} { #{s} #{p} #{o} . #{c} #{q} #{qo} } . "
-
-    # Aditional restrictions
-    query += "#{p} a wikibase:Property . " if mask[1] == '0'
-    query += "#{q} a wikibase:Property . " if mask[3] == '0'
-    query += "FILTER (#{s} != #{c}) " if mask[0] == '0'
-    
-    # Limit
-    query += "} LIMIT #{limit}"
-  end
-
-  # Generate a query from a quin
-  def self.generate_query(mode, mask, quin, limit)
-    case mode
+    case schema
     when :naryrel
-      generate_query_naryrel(mask, quin, limit)
+      query += "#{s[:s]} #{s[:p]} ?c . ?c #{s[:ps]} #{s[:o]} ; #{s[:q]} #{s[:qo]} . "
+      query += "#{p} wikibase:propertyValue #{ps} . " if mask[1] == '0'
+      query += "#{q} a wikibase:Property . " if mask[3] == '0'
+    when :onaryrel
+      if mask[3] == '1' or mask[4] == '1'
+        query += self.graph_pattern(:naryrel, mask, symbols)
+      else
+        query += "{ #{s[:s]} #{s[:p]} ?c . ?c #{s[:ps]} #{s[:o]} . "
+        query += "#{s[:p]} wikibase:propertyValue #{s[:ps]} . " if mask[1] == '0'
+        query += "} OPTIONAL { "
+        query += "?c #{s[:q]} #{s[:qo]} . "
+        query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
+        query += "}"
+      end
     when :ngraphs
-      generate_query_ngraphs(mask, quin, limit)
+      query += "GRAPH ?c { #{s[:s]} #{s[:p]} #{s[:o]} . ?c #{s[:q]} #{s[:qo]} } . "
+      query += "#{s[:p]} a wikibase:Property . " if mask[1] == '0'
+      query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
+      query += "FILTER (#{s[:s]} != ?c) " if mask[0] == '0'
+    when :ongraphs
+      if mask[3] == '1' or mask[4] == '1'
+        query += self.graph_pattern(:ngraphs, mask, symbols)
+      else
+        query += "{ GRAPH ?c { #{s[:s]} #{s[:p]} #{s[:o]} } . "
+        query += "#{s[:p]} a wikibase:Property . " if mask[1] == '0'
+        query += "FILTER (#{s[:s]} != ?c) " if mask[0] == '0'
+        query += "} OPTIONAL { "
+        query += "GRAPH ?c { ?c #{s[:q]} #{s[:qo]} } . "
+        query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
+        query += "}"
+      end
+    when :sgprop
+      query += "#{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf ?p ; #{s[:q]} #{s[:qo]} . "
+      query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
+    when :osgprop
+      if mask[3] == '1' or mask[4] == '1'
+        query += self.graph_pattern(:sgprop, mask, symbols)
+      else
+        query += "{ #{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf ?p "
+        query += "} OPTIONAL { "
+        query += "?c #{s[:q]} #{s[:qo]} . "
+        query += "#{s[:q]} a wikibase:Property " if mask[3] == '0'
+        query += "}"
+      end
+    when :stdreif
+      query += "?c rdf:subject #{s[:s]} ; rdf:predicate #{s[:p]} ; rdf:object #{s[:o]} ; #{s[:q]} #{s[:qo]} . "
+      query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
+    when :ostdreif
+      if mask[3] == '1' or mask[4] == '1'
+        query += self.graph_pattern(:stdreif, mask, symbols)
+      else
+        query += "{ ?c rdf:subject #{s[:s]} ; rdf:predicate #{s[:p]} ; rdf:object #{s[:o]} "
+        query += "} OPTIONAL { "
+        query += "#{s[:q]} #{s[:qo]} . "
+        query += "#{s[:q]} a wikibase:Property " if mask[3] == '0'
+        query += "}"
+      end
     end
+    query
+  end
+  
+  # Generate a query.
+  def self.generate_query(schema, mask, quin, limit)
+    query = <<-EOS
+    #{prefixes(schema, mask)}
+    SELECT #{select_variables(mask)} {
+      #{graph_pattern(mask, mask, quin)}
+    } LIMIT #{limit}
+    EOS
+    query.gsub(/\s+/,' ').strip
   end
 
   # Reads a quins file.
