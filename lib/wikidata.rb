@@ -95,8 +95,8 @@ module Wikidata
     case schema
     when :naryrel
       query += "#{s[:s]} #{s[:p]} ?c . ?c #{s[:ps]} #{s[:o]} ; #{s[:q]} #{s[:qo]} . "
-      query += "#{p} wikibase:propertyValue #{ps} . " if mask[1] == '0'
-      query += "#{q} a wikibase:Property . " if mask[3] == '0'
+      query += "#{s[:p]} wikibase:propertyValue #{s[:ps]} . " if mask[1] == '0'
+      query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
     when :onaryrel
       if mask[3] == '1' or mask[4] == '1'
         query += self.graph_pattern(:naryrel, mask, symbols)
