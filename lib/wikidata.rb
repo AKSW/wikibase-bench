@@ -89,8 +89,8 @@ module Wikidata
   end
   
   # Generate a graph pattern.
-  def self.graph_pattern(schema, mask, symbols)
-    s = symbols
+  def self.graph_pattern(schema, mask, quin)
+    s = query_symbols(mask, quin)
     query = ''
     case schema
     when :naryrel
