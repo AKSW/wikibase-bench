@@ -98,7 +98,7 @@ module Wikidata
       query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
     when :onaryrel
       if mask[3] == '1' or mask[4] == '1'
-        query += self.graph_pattern(:naryrel, mask, symbols)
+        query += self.graph_pattern(:naryrel, mask, quin)
       else
         query += "{ #{s[:s]} #{s[:p]} ?c . ?c #{s[:ps]} #{s[:o]} . "
         query += "#{s[:p]} wikibase:propertyValue #{s[:ps]} . " if mask[1] == '0'
@@ -114,7 +114,7 @@ module Wikidata
       query += "FILTER (#{s[:s]} != ?c) " if mask[0] == '0'
     when :ongraphs
       if mask[3] == '1' or mask[4] == '1'
-        query += self.graph_pattern(:ngraphs, mask, symbols)
+        query += self.graph_pattern(:ngraphs, mask, quin)
       else
         query += "{ GRAPH ?c { #{s[:s]} #{s[:p]} #{s[:o]} } . "
         query += "#{s[:p]} a wikibase:Property . " if mask[1] == '0'
@@ -129,7 +129,7 @@ module Wikidata
       query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
     when :osgprop
       if mask[3] == '1' or mask[4] == '1'
-        query += self.graph_pattern(:sgprop, mask, symbols)
+        query += self.graph_pattern(:sgprop, mask, quin)
       else
         query += "{ #{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf ?p "
         query += "} OPTIONAL { "
@@ -142,7 +142,7 @@ module Wikidata
       query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
     when :ostdreif
       if mask[3] == '1' or mask[4] == '1'
-        query += self.graph_pattern(:stdreif, mask, symbols)
+        query += self.graph_pattern(:stdreif, mask, quin)
       else
         query += "{ ?c rdf:subject #{s[:s]} ; rdf:predicate #{s[:p]} ; rdf:object #{s[:o]} "
         query += "} OPTIONAL { "
