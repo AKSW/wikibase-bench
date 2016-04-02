@@ -8,11 +8,7 @@ if ARGV.size != 1
   exit 1
 end
 
-LIMIT   = ARGV[0].to_i
-QUERIES = 1
-
-schema = [ARGV[2].to_sym]
-
+schema = [ARGV[0].to_sym]
 log_csv  = File.new('run_bench_all_log.csv', 'a')
 quins = Wikidata.read_quins(File.join('data', "quins-all.csv"))
 endpoint = "http://localhost:8000/sparql/"
