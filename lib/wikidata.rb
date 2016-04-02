@@ -1,5 +1,3 @@
-#!/usr/bin/env ruby
-
 require 'json'
 require 'erb'
 require 'net/http'
@@ -162,7 +160,7 @@ module Wikidata
     query = <<-EOS
     #{prefixes(schema, mask)}
     SELECT #{select_variables(mask)} {
-      #{graph_pattern(mask, mask, quin)}
+      #{graph_pattern(schema, mask, quin)}
     } LIMIT #{limit}
     EOS
     query.gsub(/\s+/,' ').strip
