@@ -3,8 +3,8 @@
 require 'csv'
 require "#{File.dirname(File.dirname(File.expand_path(__FILE__)))}/lib/wikidata.rb"
 
-if ARGV.size != 3
-  print "Usage: run_bench_all.rb <limit> <queries> <schema>"
+if ARGV.size != 1
+  print "Usage: run_fast_check.rb <schema>"
   exit 1
 end
 
@@ -22,7 +22,7 @@ endpoint = "http://localhost:8000/sparql/"
   
   j = 500*(i-1)
   puts "Executing query #{schema} #{mask} #{j}"
-  query = Wikidata::generate_query(schema, mask, quins[j], LIMIT)
+  query = Wikidata::generate_query(schema, mask, quins[j], 10000)
   result = Wikidata::run_query(endpoint, query, 60)
   array = [schema,mask,j,result[:time],nil,result[:status]]
   array[4] = Wikidata::solutions(result) if result[:status] == '200'
