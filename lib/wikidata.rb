@@ -64,7 +64,6 @@ module Wikidata
   
   def self.select_variables(mask)
     query = ''
-    query += 'SELECT '
     if mask == '11111'
       query += '* '
     else
