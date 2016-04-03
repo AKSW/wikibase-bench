@@ -158,7 +158,7 @@ module Wikidata
       else
         query += "{ ?c rdf:subject #{s[:s]} ; rdf:predicate #{s[:p]} ; rdf:object #{s[:o]} "
         query += "} OPTIONAL { "
-        query += "#{s[:q]} #{s[:qo]} . "
+        query += "?c #{s[:q]} #{s[:qo]} . "
         query += "#{s[:q]} a wikibase:Property " if mask[3] == '0'
         query += "}"
       end
