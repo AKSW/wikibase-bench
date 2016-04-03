@@ -45,13 +45,25 @@ module Wikidata
     query = ''
     if [:naryrel, :onaryrel, :ngraphs, :ongraphs].include? schema
       if mask[1] == '0' or mask[3] == '0'
-	query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
+        query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
       end
+    end
+    if [:naryrel, :onaryrel, :ngraphs, :ongraphs, :sgprop, :osgprop, :stdreif, :ostdreif].include? schema
       if mask[0] == '1' or mask[2] == '1' or mask[4] == '1'
-	query += 'PREFIX wd: <http://www.wikidata.org/entity/> '
+        query += 'PREFIX wd: <http://www.wikidata.org/entity/> '
       end
       if mask[1] == '1' or mask[3] == '1'
-	query += 'PREFIX p: <http://www.wikidata.org/prop/> '
+        query += 'PREFIX p: <http://www.wikidata.org/prop/> '
+      end
+    end
+    if [:sgprop, :osgprop].include? schema
+      if mask[1] == '0'
+        query += 'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>'
+      end
+    end
+    if [:sgprop, :osgprop, :stdreif, :ostdreif].include? schema
+      if mask[3] == '0'
+        query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
       end
     end
     if [:naryrel, :onaryrel].include? schema
