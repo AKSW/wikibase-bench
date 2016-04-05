@@ -25,7 +25,7 @@ Dir['*.json.gz'].each do |file_name|
     end
   end
   
-  DB.begin do
+  DB.transaction do
     DB[:docs].multi_insert(docs)
     DB[:errors].multi_insert(errors)
   end
