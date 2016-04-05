@@ -10,7 +10,7 @@ end
 
 DB = Sequel.connect('postgres://wikidata:wikidata@localhost/wikidata')
 
-Dir['*.json.gz'].each do |file_name|
+Dir['*.json.gz'].sort.each do |file_name|
   puts "Processing #{file_name}"
   
   docs   = []
