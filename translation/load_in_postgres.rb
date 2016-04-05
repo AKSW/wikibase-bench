@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'json'
 require 'zlib'
 require 'sequel'
 
@@ -24,6 +25,9 @@ Dir['*.json.gz'].sort.each do |file_name|
       errors << {file: file_name, line: line}
     end
   end
+  
+  puts "  #{docs.size} docs"
+  puts "  #{erros.size} errors"
   
   DB.transaction do
     DB[:docs].multi_insert(docs)
