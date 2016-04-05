@@ -16,7 +16,7 @@ Dir['*.json.gz'].each do |file_name|
   docs   = []
   errors = []
   Zlib::GzipReader.new(File.new(file_name,'r')).each do |line|
-    line.strip!.sub!(/,$/)
+    line.strip!.sub!(/,$/,'')
     begin
       doc = JSON.parse(line)
       docs << {file: file_name, doc: doc.to_json}
