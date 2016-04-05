@@ -27,7 +27,7 @@ Dir['*.json.gz'].sort.each do |file_name|
   end
   
   puts "  #{docs.size} docs"
-  puts "  #{erros.size} errors"
+  puts "  #{errors.size} errors"
   
   DB.transaction do
     DB[:docs].multi_insert(docs)
