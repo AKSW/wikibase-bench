@@ -405,8 +405,6 @@ class Translator
       pairs << [@wikibase.alttitude, RDF::Literal::Decimal.new(value['alttitude'])]
       pairs << [@wikibase.precision, RDF::Literal::Decimal.new(value['precision'])]
       pairs << [@wikibase.globe,     RDF::URI.new(value['globe'])]
-    else
-      raise "Unsuported type: #{mainsnak['datatype']}\n\nSNAK: #{mainsnak.inspect}\n\nDOC: #{@doc.inspect}"
     end
     pairs
   end
