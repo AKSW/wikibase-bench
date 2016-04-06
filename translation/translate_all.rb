@@ -3,7 +3,12 @@
 threads = []
 mutex = Mutex.new 
 
-Dir['wikidata-20160104/*.json.gz'].sort.each do |gziped_file_name|
+if ARGV.size != 1
+  puts 'usage: load_in_postgres.rb <directory>'
+  exit 1
+end
+
+Dir["#{ARGV[0]}/*.json.gz"].sort.each do |gziped_file_name|
   file_name = gziped_file_name.sub(/.gz$/,'')
   system "gunzip -c #{gziped_file_name} > #{file_name}"
   ['naryrel','ngraphs','sgprop','stdreif'].each do |mode|
