@@ -56,12 +56,8 @@ module Wikidata
         query += 'PREFIX p: <http://www.wikidata.org/prop/> '
       end
     end
-    if [:sgprop, :osgprop].include? schema
-      if mask[1] == '0'
-        query += 'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>'
-      end
-    end
     if [:sgprop, :osgprop, :stdreif, :ostdreif].include? schema
+      query += 'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>'
       if mask[3] == '0'
         query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
       end
@@ -137,13 +133,13 @@ module Wikidata
         query += "}"
       end
     when :sgprop
-      query += "#{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf ?p ; #{s[:q]} #{s[:qo]} . "
+      query += "#{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf #{s[:p]} ; #{s[:q]} #{s[:qo]} . "
       query += "#{s[:q]} a wikibase:Property . " if mask[3] == '0'
     when :osgprop
       if mask[3] == '1' or mask[4] == '1'
         query += self.graph_pattern(:sgprop, mask, quin)
       else
-        query += "{ #{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf ?p "
+        query += "{ #{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf #{s[:p]} "
         query += "} OPTIONAL { "
         query += "?c #{s[:q]} #{s[:qo]} . "
         query += "#{s[:q]} a wikibase:Property " if mask[3] == '0'
