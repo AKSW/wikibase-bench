@@ -23,13 +23,14 @@ module Wikidata
     http.read_timeout = timeout
     url = "#{endpoint}?query=#{url_encode(query)}"
     
+    t1 = Time.now
     begin
-      t1 = Time.now
       resp = http.get(URI(url), {'Accept'=>'application/json'})
       t2 = Time.now
       result = {time: t2-t1, body: resp.body, status: resp.code}
     rescue RuntimeError => e
-      result = {time: 'timeout', error: e}
+      t2 = Time.now
+      result = {time: t2-t1, status: 'timeout', error: e}
     end
   end
 
