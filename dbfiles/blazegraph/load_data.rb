@@ -39,32 +39,32 @@ module Wikidata
       system 'pidof blazegraph | xargs kill'
     end
 
-    def self.load(schema, directory)
-      database = dbdir(schema)
-      wikidata = File.absolute_path(directory)
-      if File.exists? database
-        raise "Database #{database} exists"
-      else
-        system "mkdir #{dbdir(schema)}"
-        Dir.chdir dbdir(schema)
-        system "ln -s ../#{properties(schema)} server.properties"
-        system "ln -s ../blazegraph.jar blazegraph.jar"
-        system "ln -s #{wikidata} wikidata"
-      end
-      t1 = Time.now
-      system "java -cp blazegraph.jar com.bigdata.rdf.store.DataLoader server.properties wikidata"
-      t2 = Time.now
-      Dir.chdir '..'
-      t2-t1
-    end
-
   end
+end
+
+def load_data(schema, directory)
+  database = "db-#{schema}-1"
+  wikidata = File.absolute_path(directory)
+  if File.exists? database
+    raise "Database #{database} exists"
+  else
+    system "mkdir #{database}"
+    Dir.chdir database
+    system "ln -s ../#{properties(schema)} server.properties"
+    system "ln -s ../blazegraph.jar blazegraph.jar"
+    system "ln -s #{wikidata} wikidata"
+  end
+  t1 = Time.now
+  system "java -cp blazegraph.jar com.bigdata.rdf.store.DataLoader server.properties wikidata"
+  t2 = Time.now
+  Dir.chdir '..'
+  t2-t1
 end
 
 log = File.new('loading.log', 'a')
 [:naryrel, :ngraphs, :sgprop, :stdreif].each do |schema|
   dir = File.join(File.dirname(File.dirname(Dir.pwd)),'wikidata',"nq-#{schema}")
   log.puts "Loading #{schema} from #{dir}"
-  time = Wikidata::BlazeGraph::load(schema, dir)
+  time = load_data(schema, dir)
   log.puts "Elapsed time: #{time}"
 end
