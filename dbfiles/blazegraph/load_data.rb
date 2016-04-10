@@ -65,6 +65,8 @@ log = File.new('loading.log', 'a')
 [:naryrel, :ngraphs, :sgprop, :stdreif].each do |schema|
   dir = File.join(File.dirname(File.dirname(Dir.pwd)),'wikidata',"nq-#{schema}")
   log.puts "Loading #{schema} from #{dir}"
+  log.flush
   time = load_data(schema, dir)
   log.puts "Elapsed time: #{time}"
+  log.flush
 end
