@@ -2,3 +2,4 @@
 data/quin-patterns-*.csv
 queries/quins-*
 *.log
+dbfiles/blazegraph/db-*1
