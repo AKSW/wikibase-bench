@@ -3,7 +3,7 @@
 require 'rdf'
 require 'rdf/nquads'
 
-if ARGV.size = 1
+if ARGV.size == 1
   directory = ARGV[0]
 else
   puts "Usage: add_default_graph.rb <directory>"
