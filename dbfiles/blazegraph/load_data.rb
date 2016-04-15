@@ -19,7 +19,7 @@ def load_data(schema, directory)
     system "ln -s #{wikidata} wikidata"
   end
   t1 = Time.now
-  system "java -Xmx6g -cp blazegraph.jar com.bigdata.rdf.store.DataLoader -namedGraph http://wikidata.org server.properties wikidata"
+  system "java -Xmx6g -cp blazegraph.jar com.bigdata.rdf.store.DataLoader -defaultGraph http://wikidata.org server.properties wikidata"
   t2 = Time.now
   Dir.chdir '..'
   t2-t1
