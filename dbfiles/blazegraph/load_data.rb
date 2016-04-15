@@ -1,44 +1,8 @@
-module Wikidata
-
-  module BlazeGraph
-    def self.dbdir(schema, id=1)
-      case schema
-      when :naryrel, :onaryrel
-        "db-naryrel-#{id}"
-      when :ngraphs, :ongraphs
-        "db-ngraphs-#{id}"
-      when :sgprop, :osgprop
-        "db-sgprop-#{id}"
-      when :stdreif, :ostdreif
-        "db-stdreif-#{id}"
-      end
-    end
-
-    def self.properties(schema)
-      case schema
-      when :ngraphs, :ongraphs
-        "quads.properties"
-      else
-        "triples.properties"
-      end
-    end
-
-    def self.start(schema, id=1)
-      fork do
-        Dir.chdir dbdir(schema, id)
-        $stdout.reopen("out.log", "w")
-        $stderr.reopen("err.log", "w")
-        exec(['java', 'blazegraph'],
-          "-Dbigdata.propertyFile=../#{properties(schema)}",
-          "-jar", "blazegraph.jar",
-        )
-      end
-    end
-
-    def self.stop()
-      system 'pidof blazegraph | xargs kill'
-    end
-
+def properties(schema)
+  if [:ngraphs, :ongraphs].include? schema
+    "quads.properties"
+  else
+    "triples.properties"
   end
 end
 
@@ -55,14 +19,21 @@ def load_data(schema, directory)
     system "ln -s #{wikidata} wikidata"
   end
   t1 = Time.now
-  system "java -cp blazegraph.jar com.bigdata.rdf.store.DataLoader server.properties wikidata"
+  system "java -Xmx6g -cp blazegraph.jar com.bigdata.rdf.store.DataLoader -namedGraph http://wikidata.org server.properties wikidata"
   t2 = Time.now
   Dir.chdir '..'
   t2-t1
 end
 
 log = File.new('loading.log', 'a')
-[:naryrel, :ngraphs, :sgprop, :stdreif].each do |schema|
+
+if ARGV.size > 0
+  schemas = [ARGV[0].to_sym]
+else
+  schemas = [:naryrel, :ngraphs, :sgprop, :stdreif]
+end
+
+schemas.each do |schema|
   dir = File.join(File.dirname(File.dirname(Dir.pwd)),'wikidata',"nq-#{schema}")
   log.puts "Loading #{schema} from #{dir}"
   log.flush
