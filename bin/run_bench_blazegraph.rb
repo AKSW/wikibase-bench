@@ -27,7 +27,7 @@ STDOUT.sync = true
 log_csv  = File.new('run_bench_all_log.csv', 'a')
 
 quins = Wikidata.read_quins(File.join('data', "quins-all.csv"))
-endpoint = "http://localhost:8000/sparql/"
+endpoint = "http://localhost:9999/blazegraph/namespace/kb/sparql"
 
 schemas.each do |schema|
   (1..31).each do |i|
@@ -40,7 +40,7 @@ schemas.each do |schema|
     server.start
     sleep 180
 
-    builder = QueryBuilder.new schema, mask
+    builder = Wikidata::QueryBuilder.new schema, mask
 
     start = 500*(i-1)
     (start...(start+QUERIES)).each do |j|
