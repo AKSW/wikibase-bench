@@ -56,7 +56,7 @@ module Wikidata
 
   class QueryBuilder
 
-    def initilize(schema, mask)
+    def initialize(schema, mask)
       @schema = schema
       @mask   = mask
     end
