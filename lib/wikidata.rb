@@ -250,7 +250,7 @@ module Wikidata
       end
     end
 
-    def self.start(schema, id=1)
+    def start(schema, id=1)
       fork do
         Dir.chdir @home
         $stdout.reopen("out.log", "w")
