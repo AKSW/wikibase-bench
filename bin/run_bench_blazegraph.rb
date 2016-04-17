@@ -48,7 +48,7 @@ schemas.each do |schema|
       query = builder.build quins[j], LIMIT
       result = query.run endpoint, 60
       array = [schema, mask, j, result[:time], nil, result[:status]]
-      array[4] = Query.solutions(result) if result[:status] == '200'
+      array[4] = Wikidata::Query.solutions(result) if result[:status] == '200'
       log_csv.puts array.to_csv
       log_csv.flush
     end
