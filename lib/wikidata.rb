@@ -225,7 +225,7 @@ module Wikidata
       end
     end
 
-    def self.stop
+    def stop
       system "pidof #{@app} | xargs kill"
     end
 
