@@ -25,11 +25,11 @@ module Wikidata
     end
 
     # Run a query against an endpoint.
-    def run(endpoint, timeout)
+    def run(server, timeout)
       http = Net::HTTP.new(URI.parse(endpoint).host, URI.parse(endpoint).port)
       http.open_timeout = 60
       http.read_timeout = timeout
-      url = "#{endpoint}?query=#{url_encode(@query)}"
+      url = server.url(query)
 
       t1 = Time.now
       begin
@@ -204,7 +204,7 @@ module Wikidata
     quins
   end
 
-  class Database
+  class DBServer
 
     def initialize(schema, id=1)
       @schema = schema
@@ -231,7 +231,7 @@ module Wikidata
 
   end
 
-  class BlazeGraph < Database
+  class BlazeGraph < DBServer
 
     attr_reader :home
 
@@ -239,6 +239,11 @@ module Wikidata
       super
       @home = File.join('dbfiles','blazegraph',@home)
       @app  = 'blazegraph'
+      @endpoint = 'http://localhost:9999/blazegraph/namespace/kb/sparql'
+    end
+
+    def url(query)
+      "#{@endpoint}?query=#{url_encode(query)}&timeout=60"
     end
 
     def properties

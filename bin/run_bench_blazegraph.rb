@@ -27,7 +27,6 @@ STDOUT.sync = true
 log_csv  = File.new('run_bench_all_log.csv', 'a')
 
 quins = Wikidata.read_quins(File.join('data', "quins-all.csv"))
-endpoint = "http://localhost:9999/blazegraph/namespace/kb/sparql"
 
 schemas.each do |schema|
   (1..31).each do |i|
@@ -46,7 +45,7 @@ schemas.each do |schema|
     (start...(start+QUERIES)).each do |j|
       puts "Executing query #{schema} #{mask} #{j}"
       query = builder.build quins[j], LIMIT
-      result = query.run endpoint, 60
+      result = query.run server, 60
       array = [schema, mask, j, result[:time], nil, result[:status]]
       array[4] = Wikidata::Query.solutions(result) if result[:status] == '200'
       log_csv.puts array.to_csv
