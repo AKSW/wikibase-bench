@@ -10,7 +10,7 @@
 # This script generate almost 500 unrepeated patterns for each mask
 # from 00001 to 11111, where 1 a 0 means a constant or a variable in a
 # position of a quin. For example, given the quin (c0,...,c4) and
-# the mask 01011, then it generates the pattern (?x0,c1,?x2,c3,c4). 
+# the mask 01011, then it generates the pattern (?x0,c1,?x2,c3,c4).
 #
 # This script reads quins in order from the file 'data/quins-all.csv'
 # and generate a pattern for each of them to complete 500. Also, it
@@ -62,7 +62,7 @@ puts "readed #{all.size} quins"
   end
 
   ofile = File.open("data/quin-patterns-#{quin_mask}.csv", 'w')
-  set.to_a.sort.shuffle(random: Random.new(1)).each do |q|
+  set.to_a.sort.shuffle(random: Random.new(quin_pattern)).each do |q|
     ofile.puts q.join(' ')
   end
   ofile.close
