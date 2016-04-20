@@ -3,8 +3,8 @@
 require 'csv'
 require "#{File.dirname(File.dirname(File.expand_path(__FILE__)))}/lib/wikidata.rb"
 
-if ARGV.size != 3
-  puts "Usage: run_bench_all.rb <limit> <queries> <schema>"
+if ARGV.size < 3
+  puts "Usage: run_bench_all.rb <limit> <queries> <schema> <id-1>...<id-k>"
   exit 1
 end
 
