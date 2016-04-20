@@ -26,7 +26,7 @@ module Wikidata
 
     # Run a query against an endpoint.
     def run(server, timeout)
-      http = Net::HTTP.new(URI.parse(server.url).host, URI.parse(server.url).port)
+      http = Net::HTTP.new(URI.parse(server.endpoint).host, URI.parse(server.endpoint).port)
       http.open_timeout = 60
       http.read_timeout = timeout
       url = server.url(query)
@@ -205,6 +205,8 @@ module Wikidata
   end
 
   class DBServer
+    
+    attr_reader :endpoint
 
     def initialize(schema, id=1)
       @schema = schema
