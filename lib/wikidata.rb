@@ -26,7 +26,7 @@ module Wikidata
 
     # Run a query against an endpoint.
     def run(server, timeout)
-      http = Net::HTTP.new(URI.parse(endpoint).host, URI.parse(endpoint).port)
+      http = Net::HTTP.new(URI.parse(server.url).host, URI.parse(server.url).port)
       http.open_timeout = 60
       http.read_timeout = timeout
       url = server.url(query)
