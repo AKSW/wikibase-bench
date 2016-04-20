@@ -28,8 +28,14 @@ log_csv  = File.new('run_bench_all_log.csv', 'a')
 
 quins = Wikidata.read_quins(File.join('data', "quins-all.csv"))
 
+if ARGV.size > 3
+  masks = ARGV[3...ARGV.size].map{ |x| x.to_i }
+else
+  masks = (1..31)
+end
+
 schemas.each do |schema|
-  (1..31).each do |i|
+  masks.each do |i|
     mask = ("%05b" % i).reverse
     puts "Running bench for #{mask} (#{schema})"
 
