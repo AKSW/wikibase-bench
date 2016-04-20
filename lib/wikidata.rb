@@ -270,4 +270,28 @@ module Wikidata
 
   end
 
+  class Virtuoso
+
+    def initialize(schema, id=1)
+      super
+      @home = File.join('usr', 'local', 'virtuoso-opensource', 'var', 'lib', 'virtuoso', @home)
+      @app  = 'virtuoso-t'
+      @endpoint = 'http://localhost:8000/sparql/'
+    end
+
+    def url(query)
+      "#{@endpoint}?query=#{url_encode(query)}"
+    end
+
+    def start
+      fork do
+        Dir.chdir @home
+        $stdout.reopen("out.log", "w")
+        $stderr.reopen("err.log", "w")
+        exec @app
+      end
+    end
+    
+  end
+
 end
