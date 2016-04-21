@@ -33,7 +33,8 @@ CONFIG[:schemas].each do |schema|
 
     # Run the queries for this mask
     builder = Wikidata::QueryBuilder.new schema, mask
-    results = File.new("results_#{CONFIG[:engine].name.downcase}_#{schema}_#{mask}.csv")
+    results = File.new("results_#{CONFIG[:engine].name.downcase.sub(/^wikidata::/,'')}_#{schema}_#{mask}.csv", 'a')
+    results.puts "BEGIN: #{Time.now.to_s}"
     (0...CONFIG[:max_queries]).each do |j|
       puts "Executing query #{schema} #{mask} #{j}"
       query = builder.build quins[j], CONFIG[:max_solutions]
@@ -43,6 +44,7 @@ CONFIG[:schemas].each do |schema|
       results.puts array.to_csv
       results.flush
     end
+    results.puts "END: #{Time.now.to_s}"
     results.close
 
     # Stop server
