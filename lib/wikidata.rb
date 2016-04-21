@@ -278,7 +278,7 @@ module Wikidata
 
     def initialize(schema, id=1)
       super
-      @home = File.join('usr', 'local', 'virtuoso-opensource', 'var', 'lib', 'virtuoso', @home)
+      @home = "/usr/local/virtuoso-opensource/var/lib/virtuoso/#{@home}"
       @app  = 'virtuoso-t'
       @endpoint = 'http://localhost:8000/sparql/'
     end
