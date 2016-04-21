@@ -205,7 +205,7 @@ module Wikidata
   end
 
   class DBServer
-    
+
     attr_reader :endpoint
 
     def initialize(schema, id=1)
@@ -233,7 +233,7 @@ module Wikidata
 
   end
 
-  class BlazeGraph < DBServer
+  class Blazegraph < DBServer
 
     attr_reader :home
 
@@ -245,7 +245,7 @@ module Wikidata
     end
 
     def url(query)
-      "#{@endpoint}?query=#{url_encode(query)}&timeout=60"
+      "#{@endpoint}?query=#{url_encode(query)}&timeout=#{CONFIG[:server_timeout]}&analytic=true"
     end
 
     def properties
@@ -291,7 +291,7 @@ module Wikidata
         exec @app
       end
     end
-    
+
   end
 
 end
