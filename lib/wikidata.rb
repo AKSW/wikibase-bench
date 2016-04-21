@@ -45,10 +45,14 @@ module Wikidata
     # Count solutions of a query
     def self.solutions(results)
       if results[:status].to_i == 200
-        doc = JSON.parse(results[:body])
-        doc['results']['bindings'].size
+        begin
+          doc = JSON.parse(results[:body])
+          return doc['results']['bindings'].size
+        rescue
+          return nil
+        end
       else
-        nil
+        return nil
       end
     end
 
