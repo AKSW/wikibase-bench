@@ -274,7 +274,7 @@ module Wikidata
 
   end
 
-  class Virtuoso
+  class Virtuoso < DBServer
 
     def initialize(schema, id=1)
       super
