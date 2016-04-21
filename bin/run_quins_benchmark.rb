@@ -8,6 +8,7 @@ For example:
 $ bin/run_quins_benchmark.rb config/blazegraph.rb
 EOS
 
+require 'csv'
 require './lib/wikidata.rb'
 require "./#{ARGV[0]}"
 
