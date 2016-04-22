@@ -44,11 +44,11 @@ CONFIG[:schemas].each do |schema|
       array = [schema, mask, j, result[:time], nil, result[:status]]
       if result[:status] == '200'
         array[4] = Wikidata::Query.solutions(result)
-        body_file = File.new("results/log/quins/body_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
+        body_file = File.new("results/solutions/quins/body_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
         body_file.puts result[:body]
         body_file.close
       end
-      query_file = File.new("results/log/quins/body_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
+      query_file = File.new("results/queries/quins/query_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
       query_file.puts query.to_s
       query_file.close
       results.puts array.to_csv
