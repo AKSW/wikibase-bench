@@ -27,8 +27,9 @@ CONFIG[:schemas].each do |schema|
     quins = Wikidata.read_quins quins_file
 
     # Start server
-    puts "Starting server #{schema} #{mask} #{k%2}"
-    server = CONFIG[:engine].new(schema, CONFIG[:homes][k%2])
+    server_id = k % CONFIG[:homes].size
+    puts "Starting server #{schema} #{mask} #{server_id}"
+    server = CONFIG[:engine].new(schema, CONFIG[:homes][server_id])
     server.start
     sleep 180
 
