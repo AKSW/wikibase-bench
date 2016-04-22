@@ -14,6 +14,10 @@ module Wikidata
       @query = query
     end
 
+    def to_s
+      @query
+    end
+
     # Create a new query from a file
     def self.open(file_name)
       query = ''

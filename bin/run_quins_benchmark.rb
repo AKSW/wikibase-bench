@@ -34,14 +34,23 @@ CONFIG[:schemas].each do |schema|
 
     # Run the queries for this mask
     builder = Wikidata::QueryBuilder.new schema, mask
-    results = File.new("results_#{CONFIG[:engine].name.downcase.sub(/^wikidata::/,'')}_#{schema}_#{mask}.csv", 'a')
+    engine_codename = CONFIG[:engine].name.downcase.sub(/^wikidata::/,'')
+    results = File.new("results_#{engine_codename}_#{schema}_#{mask}.csv", 'a')
     results.puts "BEGIN: #{Time.now.to_s}"
     (0...CONFIG[:max_queries]).each do |j|
       puts "Executing query #{schema} #{mask} #{j}"
       query = builder.build quins[j], CONFIG[:max_solutions]
       result = query.run server, CONFIG[:client_timeout]
       array = [schema, mask, j, result[:time], nil, result[:status]]
-      array[4] = Wikidata::Query.solutions(result) if result[:status] == '200'
+      if result[:status] == '200'
+        array[4] = Wikidata::Query.solutions(result)
+        body_file = File.new("results/log/quins/body_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
+        body_file.puts result[:body]
+        body_file.close
+      end
+      query_file = File.new("results/log/quins/body_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
+      query_file.puts query.to_s
+      query_file.close
       results.puts array.to_csv
       results.flush
     end
