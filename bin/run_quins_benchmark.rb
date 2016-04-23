@@ -49,7 +49,7 @@ CONFIG[:schemas].each do |schema|
         body_file.puts result[:body]
         body_file.close
       end
-      query_file = File.new("results/queries/quins/query_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
+      query_file = File.new("results/queries/quins/query_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.sparql", 'w')
       query_file.puts query.to_s
       query_file.close
       results.puts array.to_csv
