@@ -38,5 +38,5 @@ WHERE
   b.entity_id = claims.valueitem AND
   a.claims >= 5 AND
   a.claims >= 4
-￼ORDER BY random()
+ORDER BY random()
 LIMIT 500;
