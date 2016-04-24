@@ -38,7 +38,7 @@ CONFIG[:schemas].each do |schema|
     engine_codename = CONFIG[:engine].name.downcase.sub(/^wikidata::/,'')
     results = File.new("results_#{engine_codename}_#{schema}_#{mask}.csv", 'a')
     results.puts "BEGIN: #{Time.now.to_s}"
-    (0...CONFIG[:max_queries]).each do |j|
+    CONFIG[:queries].each do |j|
       puts "Executing query #{schema} #{mask} #{j}"
       query = builder.build quins[j], CONFIG[:max_solutions]
       result = query.run server, CONFIG[:client_timeout]
