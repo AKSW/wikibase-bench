@@ -8,7 +8,7 @@ DB = Sequel.connect('postgres://wikidata:wikidata@localhost/wikidata_enzo')
 
 puts 'Reading start items'
 
-START_ITEMS = DB[:entities_claim_quantities].
+START_ITEMS = DB[:entities_out_degree].
               where('claims >= ?', 5).
               select(:entity_id).
               all.map{ |item| item[:entity_id] }
