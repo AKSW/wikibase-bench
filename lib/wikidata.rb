@@ -271,8 +271,12 @@ module Wikidata
         $stdout.reopen("out.log", "w")
         $stderr.reopen("err.log", "w")
         exec(['java', @app],
-          '-Xmx6g', '-Dbigdata.propertyFile=server.properties',
-          '-jar', 'blazegraph.jar')
+          '-Xmx6g',
+          '-XX:+UseG1GC',
+          '-Djetty.overrideWebXml=override.xml',
+          '-Dbigdata.propertyFile=server.properties',
+          '-jar',
+          'blazegraph.jar')
       end
     end
 
