@@ -64,6 +64,100 @@ module Wikidata
 
   class QueryBuilder
 
+    @@prefixes = {
+      wikibase: '<http://wikiba.se/ontology-beta#>',
+      wd: '<http://www.wikidata.org/entity/>',
+      rdf: '<http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
+      p: '<http://www.wikidata.org/prop/>',
+      ps: '<http://www.wikidata.org/prop/statement/>'
+    }
+
+    def prefix(namespace)
+      "PREFIX #{namespace}: #{@@prefixes[namespace]}"
+    end
+
+  end
+
+  class PathQueryBuilder < QueryBuilder
+
+    def initialize(schema)
+      @schema = schema
+    end
+
+    def prefixes
+      case @schema
+      when :naryrel
+        prefix_list = [:wd, :p, :ps, :wikibase]
+      when :ngraphs
+        prefix_list = [:wd, :p]
+      when :sgprop
+        prefix_list = [:wd, :rdf, :p]
+      when :stdreif
+        prefix_list = [:wd, :p, :rdf]
+      end
+      prefix_list.map { |namespace| prefix(namespace) }
+    end
+
+    def statement(claim_var, entity, property, valueitem)
+      case @schema
+      when :naryrel
+        [
+          "wd:#{entity}", "p:#{property}", claim_var, '.',
+          claim_var, "ps:#{property}", "wd:#{valueitem}", '.',
+          "ps:#{property}", 'wikibase:propertyValue', "ps:#{property}", '.'
+        ]
+      when :ngraphs
+        [
+          "GRAPH #{claim_var} { wd:#{entity} p:#{property} wd:#{valueitem}} ."
+        ]
+      when :sgprop
+        [
+          "wd:#{entity}", claim_var, "wd:#{valueitem}", '.',
+          claim_var, 'rdf:singletonPropertyOf', "p:#{property}", '.'
+        ]
+      when :stdreif
+        [
+          claim_var, 'rdf:subject', "wd:#{entity}", '.',
+          claim_var, 'rdf:property', "p:#{property}", '.',
+          claim_var, 'rdf:object', "wd:#{valueitem}", '.'
+        ]
+      end
+    end
+
+    def build(path, limit)
+      select_clause = []
+      graph_pattern = []
+      (0...path.size).each do |i|
+        entity  = "?x#{i}"
+        select_clause << entity
+        node = path[i]
+        claims = node['claims']
+        (0...claims.size).each do |j|
+          claim = claims[j]
+          property = claim[0]
+          case claim[1]
+          when 0, 1
+            valueitem = "?x#{i}y#{j}"
+            select_clause << valueitem if claim[1] == 1
+          else
+            valueitem = claim[1]
+          end
+          claim_var = "?claim_x#{i}y#{j}"
+          graph_pattern << statement(claim_var, entity, property, valueitem)
+        end
+        unless node['property'].nil?
+          graph_pattern << statement("?claim_x#{i}", entity, node['property'], "?x#{i+1}")
+        end
+      end
+
+      query = prefixes + ['SELECT'] + select_clause + ['WHERE', '{'] + graph_pattern + ['}', 'LIMIT', limit]
+      Query.new(query.join ' ')
+    end
+
+  end
+
+  class QuinQueryBuilder < QueryBuilder
+
     def initialize(schema, mask)
       @schema = schema
       @mask   = mask
@@ -134,7 +228,7 @@ module Wikidata
         query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
       when :onaryrel
         if @mask[3] == '1' or @mask[4] == '1'
-          query += QueryBuilder.new(:naryrel, @mask).graph_pattern(quin)
+          query += QuinQueryBuilder.new(:naryrel, @mask).graph_pattern(quin)
         else
           query += "{ #{s[:s]} #{s[:p]} ?c . ?c #{s[:ps]} #{s[:o]} . "
           query += "#{s[:p]} wikibase:propertyValue #{s[:ps]} . " if @mask[1] == '0'
@@ -150,7 +244,7 @@ module Wikidata
         query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0'
       when :ongraphs
         if @mask[3] == '1' or @mask[4] == '1'
-          query += QueryBuilder.new(:ngraphs, @mask).graph_pattern(quin)
+          query += QuinQueryBuilder.new(:ngraphs, @mask).graph_pattern(quin)
         else
           query += "{ GRAPH ?c { #{s[:s]} #{s[:p]} #{s[:o]} } . "
           query += "#{s[:p]} a wikibase:Property . " if @mask[1] == '0'
@@ -165,7 +259,7 @@ module Wikidata
         query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
       when :osgprop
         if @mask[3] == '1' or @mask[4] == '1'
-          query += QueryBuilder.new(:sgprop, @mask).graph_pattern(quin)
+          query += QuinQueryBuilder.new(:sgprop, @mask).graph_pattern(quin)
         else
           query += "{ #{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf #{s[:p]} "
           query += "} OPTIONAL { "
@@ -178,7 +272,7 @@ module Wikidata
         query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
       when :ostdreif
         if @mask[3] == '1' or @mask[4] == '1'
-          query += QueryBuilder.new(:stdreif, @mask).graph_pattern(quin)
+          query += QuinQueryBuilder.new(:stdreif, @mask).graph_pattern(quin)
         else
           query += "{ ?c rdf:subject #{s[:s]} ; rdf:predicate #{s[:p]} ; rdf:object #{s[:o]} "
           query += "} OPTIONAL { "
