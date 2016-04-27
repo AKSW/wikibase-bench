@@ -34,7 +34,7 @@ CONFIG[:schemas].each do |schema|
     sleep 180
 
     # Run the queries for this mask
-    builder = Wikidata::QueryBuilder.new schema, mask
+    builder = Wikidata::QuinQueryBuilder.new schema, mask
     engine_codename = CONFIG[:engine].name.downcase.sub(/^wikidata::/,'')
     results = File.new("results_#{engine_codename}_#{schema}_#{mask}.csv", 'a')
     results.puts "BEGIN: #{Time.now.to_s}"
@@ -56,7 +56,11 @@ CONFIG[:schemas].each do |schema|
       results.puts array.to_csv
       results.flush
       timeouts += 1 if result[:status] == 'timeout'
-      break if timeouts == 10
+      if timeouts == 10
+        break
+      else
+        timeouts = 0
+      end
     end
     results.puts "END: #{Time.now.to_s}"
     results.close

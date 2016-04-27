@@ -60,7 +60,11 @@ CONFIG[:schemas].each do |schema|
       results.puts array.to_csv
       results.flush
       timeouts += 1 if result[:status] == 'timeout'
-      break if timeouts == 10
+      if timeouts == 10
+        break
+      else
+        timeouts = 0
+      end
     end
     results.puts "END: #{Time.now.to_s}"
     results.close
