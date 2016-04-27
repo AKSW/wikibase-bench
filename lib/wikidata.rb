@@ -98,28 +98,31 @@ module Wikidata
       prefix_list.map { |namespace| prefix(namespace) }
     end
 
+    def resource(name)
+      name[0] == '?' ? name : "wd:#{name}"
+    end
+
     def statement(claim_var, entity, property, valueitem)
       case @schema
       when :naryrel
         [
-          "wd:#{entity}", "p:#{property}", claim_var, '.',
-          claim_var, "ps:#{property}", "wd:#{valueitem}", '.',
-          "ps:#{property}", 'wikibase:propertyValue', "ps:#{property}", '.'
+          resource(entity), "p:#{property}", claim_var, '.',
+          claim_var, "ps:#{property}", resource(valueitem), '.'
         ]
       when :ngraphs
         [
-          "GRAPH #{claim_var} { wd:#{entity} p:#{property} wd:#{valueitem}} ."
+          "GRAPH #{claim_var} { #{resource(entity)} p:#{property} #{resource(valueitem)}} ."
         ]
       when :sgprop
         [
-          "wd:#{entity}", claim_var, "wd:#{valueitem}", '.',
+          resource(entity), claim_var, resource(valueitem), '.',
           claim_var, 'rdf:singletonPropertyOf', "p:#{property}", '.'
         ]
       when :stdreif
         [
-          claim_var, 'rdf:subject', "wd:#{entity}", '.',
+          claim_var, 'rdf:subject', resource(entity), '.',
           claim_var, 'rdf:property', "p:#{property}", '.',
-          claim_var, 'rdf:object', "wd:#{valueitem}", '.'
+          claim_var, 'rdf:object', resource(valueitem), '.'
         ]
       end
     end
