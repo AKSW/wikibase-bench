@@ -25,34 +25,35 @@ CONFIG[:schemas].each do |schema|
   builder = Wikidata::PathQueryBuilder.new schema
 
   CONFIG[:path_files].each do |path_file|
+    mask = File.basename(path_file).gsub(/.json$/, '')
 
     # Start server
     server_id = k % CONFIG[:homes].size
-    puts "Starting server #{schema} #{path_file} #{server_id}"
+    puts "Starting server #{schema} #{mask} #{server_id}"
     server = CONFIG[:engine].new(schema, CONFIG[:homes][server_id])
     server.start
     sleep 180
 
     # Run the queries for this file
     engine_codename = CONFIG[:engine].name.downcase.sub(/^wikidata::/,'')
-    results = File.new("results_#{engine_codename}_#{schema}_#{path_file}.csv", 'a')
+    results = File.new("results_#{engine_codename}_#{schema}_#{mask}.csv", 'a')
     results.puts "BEGIN: #{Time.now.to_s}"
     timeouts = 0
-    paths = File.new(path_file).to_a
+    paths = File.new(mask).to_a
     CONFIG[:queries].each do |j|
-      puts "Executing query #{schema} #{path_file} #{j}"
+      puts "Executing query #{schema} #{mask} #{j}"
 
       query = builder.build(JSON.parse(paths[j]), CONFIG[:max_solutions])
       result = query.run server, CONFIG[:client_timeout]
 
-      array = [schema, path_file, j, result[:time], nil, result[:status]]
+      array = [schema, mask, j, result[:time], nil, result[:status]]
       if result[:status] == '200'
         array[4] = Wikidata::Query.solutions(result)
-        body_file = File.new("results/solutions/paths/body_#{engine_codename}_#{schema}_#{path_file}_#{'%03i' % j}.json", 'w')
+        body_file = File.new("results/solutions/paths/body_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
         body_file.puts result[:body]
         body_file.close
       end
-      query_file = File.new("results/queries/paths/query_#{engine_codename}_#{schema}_#{path_file}_#{'%03i' % j}.sparql", 'w')
+      query_file = File.new("results/queries/paths/query_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.sparql", 'w')
       query_file.puts query.to_s
       query_file.close
       results.puts array.to_csv
