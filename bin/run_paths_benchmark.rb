@@ -39,7 +39,7 @@ CONFIG[:schemas].each do |schema|
     results = File.new("results_#{engine_codename}_#{schema}_#{mask}.csv", 'a')
     results.puts "BEGIN: #{Time.now.to_s}"
     timeouts = 0
-    paths = File.new(mask).to_a
+    paths = File.new(path_file).to_a
     CONFIG[:queries].each do |j|
       puts "Executing query #{schema} #{mask} #{j}"
 
