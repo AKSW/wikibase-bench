@@ -6,7 +6,7 @@ require './translator.rb'
 MODE = ARGV[0].to_sym
 
 i_file_name = ARGV[1]
-o_file_name = "#{i_file_name.sub(/.json$/,'')}-#{MODE}.ttl"
+o_file_name = "#{i_file_name.sub(/.json$/,'')}-#{MODE}.nq"
 
 #puts "converting #{i_file_name} -> #{o_file_name}"
 #STDOUT.flush
@@ -41,4 +41,3 @@ if @errors.size > 0
   error_file = File.new o_file_name, 'w'
   error_file << @errors.to_json
 end
-
