@@ -10,6 +10,7 @@ EOS
 
 
 require 'json'
+require 'csv'
 require './lib/wikidata.rb'
 require "./#{ARGV[0]}"
 
