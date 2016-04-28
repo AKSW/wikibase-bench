@@ -2,15 +2,17 @@
 # People born before year 1880 with no death date
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#People_born_before_year_1880_with_no_death_date
 # 3) singleton properties
-PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
+PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-SELECT ?h ?date 
-WHERE 
+PREFIX p: <http://www.wikidata.org/prop/>
+SELECT ?h ?date
+WHERE
 {
-	?h ?sing1 wd:Q5 . ?sing1 rdf:singletonProperty wd:P31 .
-	?h ?sing2 ?date . ?sing2 rdf:singletonProperty wd:P569 .
-	OPTIONAL { ?h ?sing3 ?d . ?sing3 rdf:singletonProperty wd:P570 . } 
+	?h ?sing1 wd:Q5 . ?sing1 rdf:singletonProperty p:P31 .
+	?h ?sing2 [ wikibase:timeValue ?date ] . ?sing2 rdf:singletonProperty p:P569 .
+	OPTIONAL { ?h ?sing3 ?d . ?sing3 rdf:singletonProperty p:P570 . }
 	FILTER (?date < "1880-01-01T00:00:00Z"^^xsd:dateTime)
 	FILTER (!bound(?d))
 }
