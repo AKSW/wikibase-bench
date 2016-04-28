@@ -2,20 +2,27 @@
 # List of popes
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#List_of_popes
 # 1) n-ary predicates
-PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
+PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?link ?linkLabel ?picture ?age
 WHERE
 {
-	?link wd:P31s [ wd:P31v wd:Q5 ] .
-	?link wd:P39s ?guidPositionHeldPope .
-	OPTIONAL { ?link wd:P569s [ wd:P569v ?dateOfBirth ] . }
-	OPTIONAL { ?link wd:P18s [ wd:P18v ?picture ] . }
-	OPTIONAL { ?link wd:P570s [ wd:P570v ?dateOfDeath ] .}
-	?guidPositionHeldPope wd:P39v wd:Q19546
-	           ; wd:P580q ?startTime .
+	?link p:P31 [ ps:P31 wd:Q5 ] .
+	?link p:P39 [ ps:P39 wd:Q19546 ; p:P580 [ wikibase:timeValue ?startTime ] ] .
+	OPTIONAL {
+		 ?link p:P569 [ ps:P569 [ wikibase:timeValue ?dateOfBirth ] ] .
+		 BIND (xsd:integer(strBefore(str(?dateOfBirth),"-")) as ?yearOfBirth)
+	}
+	OPTIONAL { ?link p:P18 [ ps:P18 ?picture ] . }
+	OPTIONAL {
+		?link p:P570 [ ps:P570 [ wikibase:timeValue ?dateOfDeath ] ] .
+		BIND (xsd:integer(strBefore(str(?dateOfDeath),"-")) as ?yearOfDeath)
+	}
 
-	BIND(YEAR(?dateOfDeath)-YEAR(?dateOfBirth) as ?age )
+	BIND(?yearOfDeath-?yearOfBirth as ?age )
 	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
 }
 ORDER BY DESC(?startTime)

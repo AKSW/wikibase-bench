@@ -2,14 +2,17 @@
 # People born before year 1880 with no death date
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#People_born_before_year_1880_with_no_death_date
 # 1) n-ary predicates
-PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
+PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?h ?date 
-WHERE 
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+SELECT ?h ?date
+WHERE
 {
-	?h wd:P31s [ wd:P31v wd:Q5 ] .
-	?h wd:P569s [ wd:P569v ?date ] .
-	OPTIONAL { ?h wd:P570s [ wd:P570v ?d ] . } 
+	?h p:P31 [ ps:P31 wd:Q5 ] .
+	?h p:P569 [ ps:P569 [ wikibase:timeValue ?date ] ] .
+	OPTIONAL { ?h p:P570 [ ps:P570 ?d ] . }
 	FILTER (?date < "1880-01-01T00:00:00Z"^^xsd:dateTime)
 	FILTER (!bound(?d))
 }
