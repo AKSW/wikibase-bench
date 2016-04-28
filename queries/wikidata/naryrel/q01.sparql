@@ -2,15 +2,18 @@
 # US presidents and wives
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#US_presidents_and_spouses
 # 1) n-ary predicates
-PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?p ?pl ?ppicture ?w ?wl ?wpicture WHERE {
-  wd:Q30 wd:P6s [ wd:P6v ?p ] .
-  ?p wd:P26s [ wd:P26v ?w ] .
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+SELECT ?p ?pl ?ppicture ?w ?wl ?wpicture
+WHERE {
+  wd:Q30 p:P6 [ ps:P6 ?p ] .
+  ?p p:P26 [ ps:P26 ?w ] .
   OPTIONAL  { ?p rdfs:label ?pl . filter (lang(?pl) = "en") . }
-  OPTIONAL ´{ ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
+  OPTIONAL { ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
   OPTIONAL {
-	?p wd:P18s [ wd:P18v ?ppicture ] .
-	?w wd:P18s [ wd:P18v ?wpicture ] .
+    ?p p:P18 [ ps:P18 ?ppicture ] .
+	  ?w p:P18 [ ps:P18 ?wpicture ] .
   }
 }

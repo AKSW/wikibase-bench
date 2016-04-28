@@ -4,13 +4,15 @@
 # 1) n-ary predicates
 PREFIX wd: <http://www.wikidata.org/entity/> 
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?politician ?cause ?politician_label ?cause_of_death_label {
-  ?politician wd:P106s [ wd:P106v wd:Q82955 ] . 	# find items that have "occupation (P106): politician (Q82955)"
-  ?politician wd:P509s [ wd:P509v ?cause ] .       	# with a P509 (cause of death) claim
-  ?cause (wd:P279s/wd:P279v)* wd:Q12078 .        	# ... where the cause is a subclass of (P279*) cancer (Q12078)
+  ?politician p:P106 [ ps:P106 wd:Q82955 ] . 	# find items that have "occupation (P106): politician (Q82955)"
+  ?politician p:P509 [ ps:P509 ?cause ] .     # with a P509 (cause of death) claim
+  ?cause (wd:P279s/wd:P279v)* wd:Q12078 .     # ... where the cause is a subclass of (P279*) cancer (Q12078)
 
-  OPTIONAL  {  
-    ?politician rdfs:label ?politician_label . filter (lang(?politician_label) = "en") . 
-	?cause rdfs:label ?cause_of_death_label . filter (lang(?cause_of_death_label) = "en") . 
+  OPTIONAL  {
+    ?politician rdfs:label ?politician_label . filter (lang(?politician_label) = "en") .
+	  ?cause rdfs:label ?cause_of_death_label . filter (lang(?cause_of_death_label) = "en") .
   }
 }
