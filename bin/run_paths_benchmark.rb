@@ -53,18 +53,17 @@ CONFIG[:schemas].each do |schema|
         body_file = File.new("results/solutions/paths/body_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
         body_file.puts result[:body]
         body_file.close
+        timeouts = 0
+      elsif result[:status] == 'timeout'
+        timeouts += 1
+        puts timeouts
       end
       query_file = File.new("results/queries/paths/query_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.sparql", 'w')
       query_file.puts query.to_s
       query_file.close
       results.puts array.to_csv
       results.flush
-      timeouts += 1 if result[:status] == 'timeout'
-      if timeouts == 10
-        break
-      else
-        timeouts = 0
-      end
+      break if timeouts == 10
     end
     results.puts "END: #{Time.now.to_s}"
     results.close
