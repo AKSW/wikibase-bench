@@ -1,0 +1,22 @@
+# Query 7
+# List of popes
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#List_of_popes
+# 2) RDF reification
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?link ?linkLabel ?picture ?age
+WHERE
+{
+    [] rdf:subject ?link ; rdf:predicate wd:P31 ; rdf:object wd:Q5 .
+	?guidPositionHeldPope rdf:subject ?link ; rdf:predicate wd:P39 .
+	OPTIONAL { [] rdf:subject ?link ; rdf:predicate wd:P569 ; rdf:object ?dateOfBirth .}
+	OPTIONAL { [] rdf:subject ?link ; rdf:predicate wd:P18 ; rdf:object ?picture .}
+	OPTIONAL { [] rdf:subject ?link ; rdf:predicate wd:P570 ; rdf:object ?dateOfDeath .}
+	?guidPositionHeldPope rdf:object wd:Q19546
+	           ; wd:P580 ?startTime .
+
+	BIND(YEAR(?dateOfDeath)-YEAR(?dateOfBirth) as ?age )
+	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
+}
+ORDER BY DESC(?startTime)

@@ -1,0 +1,16 @@
+# Query 4
+# What is the relation between Terrell Buckley and Miami Dolphins?
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#What_is_the_relation_between_Terrell_Buckley_and_Miami_Dolphins.3F
+# 4) Named Graphs
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdo: <http://www.wikidata.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?l
+WHERE 
+{
+	GRAPH ?g { wd:Q5571382 ?p wd:Q223243 . }
+	?p a wikibase:Property .
+	?p rdfs:label ?l . FILTER (lang(?l) = "en")
+}
+LIMIT 10

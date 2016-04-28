@@ -1,0 +1,21 @@
+# Query 7
+# List of popes
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#List_of_popes
+# 1) n-ary predicates
+PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?link ?linkLabel ?picture ?age
+WHERE
+{
+	?link wd:P31s [ wd:P31v wd:Q5 ] .
+	?link wd:P39s ?guidPositionHeldPope .
+	OPTIONAL { ?link wd:P569s [ wd:P569v ?dateOfBirth ] . }
+	OPTIONAL { ?link wd:P18s [ wd:P18v ?picture ] . }
+	OPTIONAL { ?link wd:P570s [ wd:P570v ?dateOfDeath ] .}
+	?guidPositionHeldPope wd:P39v wd:Q19546
+	           ; wd:P580q ?startTime .
+
+	BIND(YEAR(?dateOfDeath)-YEAR(?dateOfBirth) as ?age )
+	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
+}
+ORDER BY DESC(?startTime)

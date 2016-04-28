@@ -1,0 +1,17 @@
+# Query 3
+# People born before year 1880 with no death date
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#People_born_before_year_1880_with_no_death_date
+# 2) RDF reification
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?h ?date 
+WHERE 
+{
+	[] rdf:subject ?h ; rdf:predicate wd:P31 ; rdf:object wd:q5 .
+	[] rdf:subject ?h ; rdf:predicate wd:P569 ; rdf:object ?date .
+	OPTIONAL { [] rdf:subject ?h ; rdf:predicate wd:P570 ; rdf:object ?d . } 
+	FILTER (?date < "1880-01-01T00:00:00Z"^^xsd:dateTime)
+	FILTER (!bound(?d))
+}
+LIMIT 100

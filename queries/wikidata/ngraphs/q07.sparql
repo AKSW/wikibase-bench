@@ -1,0 +1,22 @@
+# Query 7
+# List of popes
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#List_of_popes
+# 4) Named Graphs
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdo: <http://www.wikidata.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?link ?linkLabel ?picture ?age
+WHERE
+{
+	GRAPH ?g1 { ?link wd:P31 wd:Q5 . }
+	GRAPH ?guidPositionHeldPope { ?link wd:P39 wd:Q19546 . }
+	OPTIONAL { GRAPH ?g2 { ?link wd:P569 ?dateOfBirth . } }
+	OPTIONAL { GRAPH ?g3 { ?link wd:P18 ?picture . } }
+	OPTIONAL { GRAPH ?g4 { ?link wd:P570 ?dateOfDeath . } }
+	?guidPositionHeldPope wd:P580 ?startTime .
+
+	BIND(YEAR(?dateOfDeath)-YEAR(?dateOfBirth) as ?age )
+	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
+}
+ORDER BY DESC(?startTime)

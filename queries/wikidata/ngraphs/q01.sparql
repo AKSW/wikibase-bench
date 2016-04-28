@@ -1,0 +1,18 @@
+# Query 1
+# US presidents and wifes
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#US_presidents_and_spouses
+# 4) Named Graphs
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdo: <http://www.wikidata.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?p ?pl ?ppicture ?w ?wl ?wpicture WHERE {
+  GRAPH ?g1 { wd:Q30 wd:P6 ?p . }
+  GRAPH ?g2 { ?p wd:P26 ?w . } 
+  OPTIONAL  { ?p rdfs:label ?pl . filter (lang(?pl) = "en") . }
+  OPTIONAL ´{ ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
+  OPTIONAL {
+	GRAPH ?g3 { ?p wd:P18 ?ppicture . }
+	GRAPH ?g4 { ?w wd:P18 ?wpicture . }
+  }
+}

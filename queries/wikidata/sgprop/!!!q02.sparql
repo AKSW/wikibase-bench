@@ -1,0 +1,17 @@
+# Query 2
+# Politicians who died of cancer (of any type)
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#Politicians_who_died_of_cancer_.28of_any_type.29
+# 3) singleton properties
+PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?politician ?cause ?politician_label ?cause_of_death_label {
+  ?politician ?sing1 wd:Q82955 . ?sing1 rdf:singletonProperty wd:P106 .		# find items that have "occupation (P106): politician (Q82955)"
+  ?politician ?sing2 ?cause . ?sing2 rdf:singletonProperty wd:P509 .		# with a P509 (cause of death) claim
+  ?cause ?sing3 wd:Q12078 . ?sing3 rdf:singletonProperty wd:P279 .        	# ... where the cause is a !!direct!! subclass of (P279*) cancer (Q12078) 
+																			# !!no property paths in singleton properties!!
+  OPTIONAL  {  
+    ?politician rdfs:label ?politician_label . filter (lang(?politician_label) = "en") . 
+	?cause rdfs:label ?cause_of_death_label . filter (lang(?cause_of_death_label) = "en") . 
+  }
+}

@@ -1,0 +1,21 @@
+# Query 7
+# List of popes
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#List_of_popes
+# 3) singleton properties
+PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?link ?linkLabel ?picture ?age
+WHERE
+{
+	?link ?sing1 wd:Q5 . ?sing1 rdf:singletonProperty wd:P31 .
+	?link ?guidPositionHeldPope wd:Q19546 . 
+	?guidPositionHeldPope rdf:singletonProperty wd:P39 ; wd:P580 ?startTime .
+	OPTIONAL { ?link ?sing2 ?dateOfBirth . ?sing2 rdf:singletonProperty wd:P569 . }
+	OPTIONAL { ?link ?sing3 ?picture . ?sing3 rdf:singletonProperty wd:P18 . }
+	OPTIONAL { ?link ?sing4 ?dateOfDeath . ?sing4 rdf:singletonProperty wd:P570 . }
+
+	BIND(YEAR(?dateOfDeath)-YEAR(?dateOfBirth) as ?age )
+	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
+}
+ORDER BY DESC(?startTime)
