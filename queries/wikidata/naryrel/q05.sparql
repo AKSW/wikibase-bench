@@ -2,23 +2,25 @@
 # Number of ministers who are themselves children of a minister, per country
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#Number_of_ministers_who_are_themselves_children_of_a_minister.2C_per_country
 # 1) n-ary predicates
-PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?cc (COUNT(DISTINCT ?child) AS ?number)
 WHERE
 {
-  ?child wd:P31s [ wd:P31v wd:Q5 ] . # Looking for real humans and not fictional ones
-  ?child wd:P39s/wd:P39v/(wd:P279s/wd:P279v)* wd:Q83307 . 
-  {  
-     ?child wd:P22s [ wd:P22v ?parent ] . 
-     ?parent wd:P39s/wd:P39v/(wd:P279s/wd:P279v)* wd:Q83307 . # does not need to be in union but left per raw query
-  } UNION { 
-	 ?child wd:P25s [ wd:P25v ?parent ] . 
-     ?parent wd:P39s/wd:P39v/(wd:P279s/wd:P279v)* wd:Q83307 . # does not need to be in union but left per raw query 
+  ?child p:P31 [ ps:P31 wd:Q5 ] . # Looking for real humans and not fictional ones
+  ?child p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 .
+  {
+     ?child p:P22 [ ps:P22 ?parent ] .
+     ?parent p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 . # does not need to be in union but left per raw query
+  } UNION {
+	 ?child p:P25 [ ps:P25 ?parent ] .
+     ?parent p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 . # does not need to be in union but left per raw query
   }
-  
-  ?child wd:P27s [ wd:P27v ?country ] .
-  ?country wd:P901s [ wd:P901v ?cc ] .
+
+  ?child p:P27 [ ps:P27 ?country ] .
+  ?country p:P901 [ ps:P901 ?cc ] .
 }
-GROUP BY ?cc 
+GROUP BY ?cc
 ORDER BY DESC(?number)

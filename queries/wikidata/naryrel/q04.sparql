@@ -2,16 +2,17 @@
 # What is the relation between Terrell Buckley and Miami Dolphins?
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#What_is_the_relation_between_Terrell_Buckley_and_Miami_Dolphins.3F
 # 1) n-ary predicates
-PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
+PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?l
-WHERE 
+WHERE
 {
-	wd:Q5571382 ?ps [ ?pv wd:Q223243 ] .
-	?ps rdf:statementProperty ?p .
-	?pv rdf:statementProperty ?p .
-	?p a wikibase:Property .
+	wd:Q5571382 ?p [ ?ps wd:Q223243 ] .
+	?p wikibase:propertyValue ?ps .
 	?p rdfs:label ?l . FILTER (lang(?l) = "en")
 }
 LIMIT 10
