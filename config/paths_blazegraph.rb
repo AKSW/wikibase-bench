@@ -1,7 +1,7 @@
 # This file provides a configuration for blazegraph:
 
 CONFIG = {
-  engine: Wikidata::blazegraph,
+  engine: Wikidata::Blazegraph,
   schemas: [:naryrel, :ngraphs, :sgprop, :stdreif],
   path_files: (1..3).map { |i| "query_parameters/paths/path_#{i}.json" },
   homes: [1,2],
