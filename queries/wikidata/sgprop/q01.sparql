@@ -5,13 +5,15 @@
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-SELECT ?p ?pl ?ppicture ?w ?wl ?wpicture WHERE {
-  wd:Q30 ?sing1 ?p . ?sing1 rdf:singletonProperty p:P6 .
-  ?p ?sing2 ?w . ?sing2 rdf:singletonProperty p:P26 .
+PREFIX p: <http://www.wikidata.org/prop/>
+SELECT ?p ?pl ?ppicture ?w ?wl ?wpicture
+WHERE {
+  wd:Q30 ?sing1 ?p . ?sing1 rdf:singletonPropertyOf p:P6 .
+  ?p ?sing2 ?w . ?sing2 rdf:singletonPropertyOf p:P26 .
   OPTIONAL  { ?p rdfs:label ?pl . filter (lang(?pl) = "en") . }
-  OPTIONAL ´{ ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
+  OPTIONAL { ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
   OPTIONAL {
-	?p ?sing3 ?ppicture . ?sing3 rdf:singletonProperty p:P18 .
-	?w ?sing4 ?wpicture . ?sing4 rdf:singletonProperty p:P18 .
+    ?p ?sing3 ?ppicture . ?sing3 rdf:singletonPropertyOf p:P18 .
+	  ?w ?sing4 ?wpicture . ?sing4 rdf:singletonPropertyOf p:P18 .
   }
 }

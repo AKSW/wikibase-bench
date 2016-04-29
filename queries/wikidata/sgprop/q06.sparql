@@ -11,20 +11,20 @@ WHERE
 {
 	{
 		SELECT (SAMPLE(?human) AS ?human) ?award ?awardWork (SAMPLE(?director) AS ?director) (SAMPLE(?awardEdition) AS ?awardEdition) (SAMPLE(?time) AS ?time) WHERE {
-			?award ?sing1 wd:Q19020 . ?sing1 rdf:singletonProperty p:P31 .  # All items that are instance of(P31) of Academy awards (Q19020)
+			?award ?sing1 wd:Q19020 . ?sing1 rdf:singletonPropertyOf p:P31 .  # All items that are instance of(P31) of Academy awards (Q19020)
 			{
-				?human ?awardStat ?award . ?awardStat rdf:singletonProperty p:P166 .  # Humans with an awarded(P166) statement  ... that has any of the values of ?award
+				?human ?awardStat ?award . ?awardStat rdf:singletonPropertyOf p:P166 .  # Humans with an awarded(P166) statement  ... that has any of the values of ?award
 				?awardStat p:P805 ?awardEdition . # Get the award edition (which is "subject of" XXth Academy Awards)
 				?awardStat p:P1686 ?awardWork . # The work they have been awarded for
-				?human ?sing2 wd:Q5 . ?sing2 rdf:singletonProperty p:P31 . # Humans
+				?human ?sing2 wd:Q5 . ?sing2 rdf:singletonPropertyOf p:P31 . # Humans
 			} UNION {
-				?awardWork ?awardStat ?award . ?awardStat rdf:singletonProperty p:P166 . # ... with an awarded(P166) statement ... that has any of the values of ?award
+				?awardWork ?awardStat ?award . ?awardStat rdf:singletonPropertyOf p:P166 . # ... with an awarded(P166) statement ... that has any of the values of ?award
 				?awardStat p:P805 ?awardEdition . # Get the award edition (which is "subject of" XXth Academy Awards)
-				?awardWork ?sing2 wd:Q11424 . ?sing2 rdf:singletonProperty p:P31 . # Films
+				?awardWork ?sing2 wd:Q11424 . ?sing2 rdf:singletonPropertyOf p:P31 . # Films
 			}
 			OPTIONAL {
-				?awardEdition ?sing3 ?time . ?sing3 rdf:singletonProperty p:585 . # the "point of time" of the Academy Award
-				?awardWork ?sing4 ?director . ?sing4 rdf:singletonProperty p:57 .
+				?awardEdition ?sing3 ?time . ?sing3 rdf:singletonPropertyOf p:585 . # the "point of time" of the Academy Award
+				?awardWork ?sing4 ?director . ?sing4 rdf:singletonPropertyOf p:57 .
 			}
 		}
 		GROUP BY ?awardWork ?award # We only want every movie once for a category (a 'random' person is selected)
