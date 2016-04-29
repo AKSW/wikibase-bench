@@ -7,14 +7,15 @@ PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT ?link ?linkLabel ?picture ?age
 WHERE
 {
 	?link p:P31 [ ps:P31 wd:Q5 ] .
 	?link p:P39 [ ps:P39 wd:Q19546 ; p:P580 [ wikibase:timeValue ?startTime ] ] .
 	OPTIONAL {
-		 ?link p:P569 [ ps:P569 [ wikibase:timeValue ?dateOfBirth ] ] .
-		 BIND (xsd:integer(strBefore(str(?dateOfBirth),"-")) as ?yearOfBirth)
+		?link p:P569 [ ps:P569 [ wikibase:timeValue ?dateOfBirth ] ] .
+		BIND (xsd:integer(strBefore(str(?dateOfBirth),"-")) as ?yearOfBirth)
 	}
 	OPTIONAL { ?link p:P18 [ ps:P18 ?picture ] . }
 	OPTIONAL {
