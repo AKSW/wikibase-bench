@@ -1,0 +1,15 @@
+# You need to execute this update several times to fix all wrong dates.
+
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+DELETE { ?subject wikibase:timeValue ?oldDate }
+INSERT { ?subject wikibase:timeValue ?newDate }
+WHERE {
+  SELECT *
+  WHERE {
+    GRAPH <http://wikidata.org> { ?subject wikibase:timeValue ?oldDate }
+    FILTER ( strStarts(str(?oldDate), "+"))
+    BIND (strDT(strAfter(str(?oldDate), "+"), xsd:dateTime) AS ?newDate)
+  }
+  LIMIT 400000
+}

@@ -1,0 +1,20 @@
+# Query 8
+# Population in Europe after 1960
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#Population_in_Europe_after_1960
+# 3) singleton properties
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX p: <http://www.wikidata.org/prop/>
+SELECT  ?objectLabel    (YEAR(?date) as ?year)
+        ?population     (?objectLabel as ?Location)
+WHERE
+{
+		?object ?sing1 wd:Q185441 . ?sing1 rdf:singletonProperty p:P31 .
+        ?object	?populationStatement ?population .
+        ?populationStatement rdf:singletonProperty p:P1082 ; p:P585 [ wikibase:timeValue ?date ] .
+		OPTIONAL { ?object rdfs:label ?objectLabel . FILTER(lang(?objectLabel)='en') }
+	FILTER (YEAR(?date) >= 1960)
+}
+ORDER BY ?objectLabel ?year

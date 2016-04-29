@@ -1,0 +1,29 @@
+# Query 5
+# Number of ministers who are themselves children of a minister, per country
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#Number_of_ministers_who_are_themselves_children_of_a_minister.2C_per_country
+# 4) Named Graphs
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdo: <http://www.wikidata.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX p: <http://www.wikidata.org/prop/>
+SELECT ?cc (COUNT(DISTINCT ?child) AS ?number)
+WHERE
+{
+  GRAPH ?g1 { ?child p:P31 wd:Q5 . } # Looking for real humans and not fictional ones
+  ?child p:P39/p:P279* wd:Q83307 . # note: assumes default graph set to union/merge of all
+  {
+     GRAPH ?g2 { ?child p:P22 ?parent . }
+     ?parent p:P39/p:P279* wd:Q83307 . # does not need to be in union but left per raw query
+										 # note: assumes default graph set to union/merge of all
+  } UNION {
+	 GRAPH ?g2 { ?child p:P25 ?parent . }
+     ?parent p:P39/p:P279* wd:Q83307 . # does not need to be in union but left per raw query
+										 # note: assumes default graph set to union/merge of all
+  }
+
+  GRAPH ?g3 { ?child p:P27 ?country . }
+  GRAPH ?g4 { ?country p:P901 ?cc . }
+}
+GROUP BY ?cc
+ORDER BY DESC(?number)

@@ -1,0 +1,19 @@
+# Query 2
+# Politicians who died of cancer (of any type)
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#Politicians_who_died_of_cancer_.28of_any_type.29
+# 4) Named Graphs
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdo: <http://www.wikidata.org/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX p: <http://www.wikidata.org/prop/>
+SELECT ?politician ?cause ?politician_label ?cause_of_death_label {
+  GRAPH ?g1 { ?politician p:P106 wd:Q82955 . } 								# find items that have "occupation (P106): politician (Q82955)"
+  GRAPH ?g2 { ?politician p:P509 ?cause . } 									# with a P509 (cause of death) claim
+  ?cause p:P279* wd:Q12078 .         											# ... where the cause is a subclass of (P279*) cancer (Q12078)
+																				# note: assumes default graph set to union/merge of all
+  OPTIONAL  {
+    ?politician rdfs:label ?politician_label . filter (lang(?politician_label) = "en") .
+    ?cause rdfs:label ?cause_of_death_label . filter (lang(?cause_of_death_label) = "en") .
+  }
+}

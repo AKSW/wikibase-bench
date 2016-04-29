@@ -1,0 +1,30 @@
+# Query 5
+# Number of ministers who are themselves children of a minister, per country
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#Number_of_ministers_who_are_themselves_children_of_a_minister.2C_per_country
+# 2) RDF reification
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?cc (COUNT(DISTINCT ?child) AS ?number)
+WHERE
+{
+  [] rdf:subject ?child ; rdf:predicate wd:P31 ; rdf:object wd:Q5 . # Looking for real humans and not fictional ones
+  [] rdf:subject ?child ; rdf:predicate wd:P39s ; rdf:object ?position .
+  [] rdf:subject ?position ; rdf:predicate wd:P279 ; rdf:object wd:Q83307 . # !!should be wd:P279* which is not possible!!
+  {  
+     [] rdf:subject ?child ; rdf:predicate wd:P22 ; rdf:object ?parent .
+	 [] rdf:parent ?child ; rdf:predicate wd:P39 ; rdf:object ?pposition .
+	 [] rdf:subject ?pposition ; rdf:predicate wd:P279 ; rdf:object wd:Q83307 . # !!should be wd:P279* which is not possible!!
+																				# does not need to be in union but left per raw query
+  } UNION { 
+     [] rdf:subject ?child ; rdf:predicate wd:P25 ; rdf:object ?parent .
+	 [] rdf:parent ?child ; rdf:predicate wd:P39 ; rdf:object ?pposition .
+	 [] rdf:subject ?pposition ; rdf:predicate wd:P279 ; rdf:object wd:Q83307 . # !!should be wd:P279* which is not possible!!
+																				# does not need to be in union but left per raw query
+  }
+  
+  [] rdf:subject ?child ; rdf:predicate wd:P27 ; rdf:object ?country .
+  [] rdf:subject ?country ; rdf:predicate wd:P901 ; rdf:object ?cc .
+}
+GROUP BY ?cc 
+ORDER BY DESC(?number)

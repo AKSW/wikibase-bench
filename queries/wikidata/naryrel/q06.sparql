@@ -1,0 +1,43 @@
+# Query 6
+# Academy award data
+# Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#Academy_award_data
+# 1) n-ary predicates
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+SELECT ?human ?humanLabel ?awardEditionLabel ?awardLabel ?awardWork ?awardWorkLabel ?director ?directorLabel ?time
+WHERE
+{
+	{
+		SELECT (SAMPLE(?human) AS ?human) ?award ?awardWork (SAMPLE(?director) AS ?director) (SAMPLE(?awardEdition) AS ?awardEdition) (SAMPLE(?time) AS ?time) WHERE {
+			?award p:P31 [ ps:P31  wd:Q19020 ] .			 # All items that are instance of(P31) of Academy awards (Q19020)
+			{
+				?human p:P166 ?awardStat .               # Humans with an awarded(P166) statement
+				?awardStat ps:P166 ?award .     	       # ... that has any of the values of ?award
+				?awardStat p:P805 ?awardEdition .        # Get the award edition (which is "subject of" XXth Academy Awards)
+				?awardStat p:P1686 ?awardWork .          # The work they have been awarded for
+				?human p:P31 [ ps:P31 wd:Q5 ] . 				 # Humans
+			} UNION {
+				?awardWork p:P166 ?awardStat .           # ... with an awarded(P166) statement
+				?awardStat ps:P166 ?award .     	       # ... that has any of the values of ?award
+				?awardStat p:P805 ?awardEdition .        # Get the award edition (which is "subject of" XXth Academy Awards)
+				?awardWork p:P31 [ ps:P31 wd:Q11424 ] .  # Films
+			}
+			OPTIONAL {
+				?awardEdition p:P585 [ ps:P585 [ wikibase:timeValue ?time ] ] . # the "point of time" of the Academy Award
+				?awardWork p:P57 [ ps:P57 ?director ] .
+			}
+		}
+		GROUP BY ?awardWork ?award # We only want every movie once for a category (a 'random' person is selected)
+	}
+
+
+	OPTIONAL { ?human rdfs:label ?humanLabel . FILTER (lang(?humanLabel) = "en") }
+	OPTIONAL { ?awardEdition rdfs:label ?awardEditionLabel . FILTER (lang(?awardEditionLabel) = "en") }
+	OPTIONAL { ?award rdfs:label ?awardLabel . FILTER (lang(?awardLabel) = "en") }
+	OPTIONAL { ?awardWork rdfs:label ?awardWorkLabel . FILTER (lang(?awardWorkLabel) = "en") }
+	OPTIONAL { ?director rdfs:label ?directorLabel . FILTER (lang(?directorLabel) = "en") }
+}
+ORDER BY DESC(?time)

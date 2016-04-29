@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 threads = []
-mutex = Mutex.new 
+mutex = Mutex.new
 
 if ARGV.size != 1
   puts 'usage: load_in_postgres.rb <directory>'
@@ -16,9 +16,9 @@ Dir["#{ARGV[0]}/*.json.gz"].sort.each do |gziped_file_name|
       mutex.synchronize do
         puts "Processing #{file_name} (#{mode})"
       end
-      
+
       system "./translate.rb #{mode} #{file_name}"
-      system "gzip #{file_name.sub(/.json$/,'')}-#{mode}.ttl"
+      system "gzip #{file_name.sub(/.json$/,'')}-#{mode}.nq"
     end
   end
 
@@ -28,5 +28,3 @@ Dir["#{ARGV[0]}/*.json.gz"].sort.each do |gziped_file_name|
   threads = []
   system "rm #{file_name}"
 end
-
-
