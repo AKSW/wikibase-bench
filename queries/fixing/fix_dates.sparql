@@ -1,5 +1,8 @@
 # You need to execute this update several times to fix all wrong dates.
-# Before you need to change virtuoso.ini
+# Before you need to change virtuoso.ini:
+#
+#   MaxVectorSize         = 10000000
+#   MaxQueryExecutionTime = 0
 
 PREFIX wikibase: <http://wikiba.se/ontology-beta#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
