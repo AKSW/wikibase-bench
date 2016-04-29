@@ -8,17 +8,26 @@ PREFIX wdo: <http://www.wikidata.org/ontology#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT ?link ?linkLabel ?picture ?age
 WHERE
 {
 	GRAPH ?g1 { ?link p:P31 wd:Q5 . }
-	GRAPH ?guidPositionHeldPope { ?link p:P39 wd:Q19546 . }
-	OPTIONAL { GRAPH ?g2 { ?link p:P569 [ wikibase:timeValue ?dateOfBirth ] . } }
+	GRAPH ?guidPositionHeldPope {
+		?link p:P39 wd:Q19546 .
+		?guidPositionHeldPope p:P580 [ wikibase:timeValue ?startTime ] .
+	}
+	OPTIONAL {
+		GRAPH ?g2 { ?link p:P569 [ wikibase:timeValue ?dateOfBirth ] . }
+		BIND (xsd:integer(strBefore(str(?dateOfBirth),"-")) as ?yearOfBirth)
+	}
 	OPTIONAL { GRAPH ?g3 { ?link p:P18 ?picture . } }
-	OPTIONAL { GRAPH ?g4 { ?link p:P570 [ wikibase:timeValue ?dateOfDeath ] . } }
-	?guidPositionHeldPope p:P580 [ wikibase:timeValue ?startTime ] .
+	OPTIONAL {
+		GRAPH ?g4 { ?link p:P570 [ wikibase:timeValue ?dateOfDeath ] . }
+		BIND (xsd:integer(strBefore(str(?dateOfDeath),"-")) as ?yearOfDeath)
+	}
 
-	BIND(YEAR(?dateOfDeath)-YEAR(?dateOfBirth) as ?age )
+	BIND(?yearOfDeath-?yearOfBirth as ?age )
 	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
 }
 ORDER BY DESC(?startTime)
