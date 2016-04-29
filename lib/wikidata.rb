@@ -121,7 +121,7 @@ module Wikidata
       when :stdreif
         [
           claim_var, 'rdf:subject', resource(entity), '.',
-          claim_var, 'rdf:property', "p:#{property}", '.',
+          claim_var, 'rdf:predicate', "p:#{property}", '.',
           claim_var, 'rdf:object', resource(valueitem), '.'
         ]
       end
