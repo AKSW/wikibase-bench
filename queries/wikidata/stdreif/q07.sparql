@@ -2,21 +2,29 @@
 # List of popes
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#List_of_popes
 # 2) RDF reification
+PREFIX wikibase: <http://wikiba.se/ontology-beta#>
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT ?link ?linkLabel ?picture ?age
 WHERE
 {
-    [] rdf:subject ?link ; rdf:predicate wd:P31 ; rdf:object wd:Q5 .
-	?guidPositionHeldPope rdf:subject ?link ; rdf:predicate wd:P39 .
-	OPTIONAL { [] rdf:subject ?link ; rdf:predicate wd:P569 ; rdf:object ?dateOfBirth .}
-	OPTIONAL { [] rdf:subject ?link ; rdf:predicate wd:P18 ; rdf:object ?picture .}
-	OPTIONAL { [] rdf:subject ?link ; rdf:predicate wd:P570 ; rdf:object ?dateOfDeath .}
-	?guidPositionHeldPope rdf:object wd:Q19546
-	           ; wd:P580 ?startTime .
+  [] rdf:subject ?link ; rdf:predicate p:P31 ; rdf:object wd:Q5 .
+	?guidPositionHeldPope rdf:subject ?link ; rdf:predicate p:P39 .
+	OPTIONAL {
+    [] rdf:subject ?link ; rdf:predicate p:P569 ; rdf:object [ wikibase:timeValue ?dateOfBirth ] .
+    BIND (xsd:integer(strBefore(str(?dateOfBirth),"-")) as ?yearOfBirth)
+  }
+	OPTIONAL { [] rdf:subject ?link ; rdf:predicate p:P18 ; rdf:object ?picture .}
+	OPTIONAL {
+    [] rdf:subject ?link ; rdf:predicate p:P570 ; rdf:object [ wikibase:timeValue ?dateOfDeath ] .
+    BIND (xsd:integer(strBefore(str(?dateOfDeath),"-")) as ?yearOfDeath)
+  }
+	?guidPositionHeldPope rdf:object wd:Q19546 ; p:P580 [ wikibase:timeValue ?startTime ] .
 
-	BIND(YEAR(?dateOfDeath)-YEAR(?dateOfBirth) as ?age )
+  BIND(?yearOfDeath-?yearOfBirth as ?age )
 	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
 }
 ORDER BY DESC(?startTime)

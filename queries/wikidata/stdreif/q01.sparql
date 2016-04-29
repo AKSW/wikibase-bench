@@ -5,13 +5,14 @@
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX p: <http://www.wikidata.org/prop/>
 SELECT ?p ?pl ?ppicture ?w ?wl ?wpicture WHERE {
-  [] rdf:subject wd:Q30 ; rdf:predicate wd:P6 ; rdf:object ?p .
-  [] rdf:subject ?p ; rdf:predicate wd:P26 ; rdf:object ?w .
-  OPTIONAL  { ?p rdfs:label ?pl . filter (lang(?pl) = "en") . }
-  OPTIONAL ´{ ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
+  [] rdf:subject wd:Q30 ; rdf:predicate p:P6 ; rdf:object ?p .
+  [] rdf:subject ?p ; rdf:predicate p:P26 ; rdf:object ?w .
+  OPTIONAL { ?p rdfs:label ?pl . filter (lang(?pl) = "en") . }
+  OPTIONAL { ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
   OPTIONAL {
-    [] rdf:subject ?p ; rdf:predicate wd:P18 ; rdf:object ?ppicture . 
-	[] rdf:subject ?w ; rdf:predicate wd:P18 ; rdf:object ?wpicture . 
+    [] rdf:subject ?p ; rdf:predicate p:P18 ; rdf:object ?ppicture .
+	  [] rdf:subject ?w ; rdf:predicate p:P18 ; rdf:object ?wpicture .
   }
 }
