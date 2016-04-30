@@ -22,7 +22,7 @@ module Wikidata
     def self.open(file_name)
       query = ''
       File.new(file_name).each_line do |line|
-        line.sub!(/#.*$/,'')
+        line.sub!(/^#.*$/,'')
         line.strip!
         query << (line + ' ') unless line.empty?
       end
