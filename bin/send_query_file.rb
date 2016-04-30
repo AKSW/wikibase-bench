@@ -22,7 +22,9 @@ query = Wikidata::Query.open(ARGV[1])
 puts query
 puts
 result = query.run(server, 180)
-puts result[:body]
-puts
+unless result[:status] == 'timeout'
+  puts result[:body]
+  puts
+end
 puts result[:time]
 puts result[:status]
