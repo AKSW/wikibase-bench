@@ -4,7 +4,6 @@
 # 4) Named Graphs
 PREFIX wikibase: <http://wikiba.se/ontology-beta#>
 PREFIX wd: <http://www.wikidata.org/entity/>
-PREFIX wdo: <http://www.wikidata.org/ontology#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p: <http://www.wikidata.org/prop/>
@@ -12,30 +11,30 @@ SELECT ?human ?humanLabel ?awardEditionLabel ?awardLabel ?awardWork ?awardWorkLa
 WHERE
 {
 	{
-		SELECT (SAMPLE(?human) AS ?human) ?award ?awardWork (SAMPLE(?director) AS ?director) (SAMPLE(?awardEdition) AS ?awardEdition) (SAMPLE(?time) AS ?time) WHERE {
-			GRAPH ?g1 { ?award p:P31 wd:Q19020 . } .	# All items that are instance of(P31) of Academy awards (Q19020)
+		SELECT (SAMPLE(?human) AS ?human) ?award ?awardWork (SAMPLE(?director) AS ?director) (SAMPLE(?awardEdition) AS ?awardEdition) (SAMPLE(?time) AS ?time)
+		WHERE {
+			GRAPH ?g1 { ?award p:P31 wd:Q19020 . } .
 			{
 				GRAPH ?awardStat {
-					?human p:P166 ?award . # Humans with an awarded(P166) statement ... that has any of the values of ?award
-					?awardStat p:P805 ?awardEdition . # Get the award edition (which is "subject of" XXth Academy Awards)
-					?awardStat p:P1686 ?awardWork . # The work they have been awarded for
+					?human p:P166 ?award .
+					?awardStat p:P805 ?awardEdition .
+					?awardStat p:P1686 ?awardWork .
 				}
-				GRAPH ?g2 { ?human p:P31 wd:Q5 . } # Humans
+				GRAPH ?g2 { ?human p:P31 wd:Q5 . }
 			} UNION {
 				GRAPH ?awardStat {
-					?awardWork p:P166 ?award . # ... with an awarded(P166) statement ... that has any of the values of ?award
-					?awardStat p:P805 ?awardEdition . # Get the award edition (which is "subject of" XXth Academy Awards)
+					?awardWork p:P166 ?award .
+					?awardStat p:P805 ?awardEdition .
 				}
-				GRAPH ?g2 { ?awardWork p:P31 wd:Q11424 . } # Films
+				GRAPH ?g2 { ?awardWork p:P31 wd:Q11424 . }
 			}
 			OPTIONAL {
-				GRAPH ?g3 { ?awardEdition p:P585 [ wikibase:timeValue ?time ] . }  # the "point of time" of the Academy Award
+				GRAPH ?g3 { ?awardEdition p:P585 [ wikibase:timeValue ?time ] . }
 				GRAPH ?g4 { ?awardWork p:P57 ?director . }
 			}
 		}
-		GROUP BY ?awardWork ?award # We only want every movie once for a category (a 'random' person is selected)
+		GROUP BY ?awardWork ?award
 	}
-
 	OPTIONAL { ?human rdfs:label ?humanLabel . FILTER (lang(?humanLabel) = "en") }
 	OPTIONAL { ?awardEdition rdfs:label ?awardEditionLabel . FILTER (lang(?awardEditionLabel) = "en") }
 	OPTIONAL { ?award rdfs:label ?awardLabel . FILTER (lang(?awardLabel) = "en") }
