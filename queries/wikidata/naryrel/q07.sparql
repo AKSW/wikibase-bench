@@ -22,7 +22,6 @@ WHERE
 		?link p:P570 [ ps:P570 [ wikibase:timeValue ?dateOfDeath ] ] .
 		BIND (xsd:integer(strBefore(str(?dateOfDeath),"-")) as ?yearOfDeath)
 	}
-
 	BIND(?yearOfDeath-?yearOfBirth as ?age )
 	OPTIONAL { ?link rdfs:label ?linkLabel . FILTER(lang(?linkLabel) = 'en')}
 }

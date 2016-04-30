@@ -9,14 +9,14 @@ PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?cc (COUNT(DISTINCT ?child) AS ?number)
 WHERE
 {
-  ?child p:P31 [ ps:P31 wd:Q5 ] . # Looking for real humans and not fictional ones
+  ?child p:P31 [ ps:P31 wd:Q5 ] .
   ?child p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 .
   {
      ?child p:P22 [ ps:P22 ?parent ] .
-     ?parent p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 . # does not need to be in union but left per raw query
+     ?parent p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 .
   } UNION {
 	 ?child p:P25 [ ps:P25 ?parent ] .
-     ?parent p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 . # does not need to be in union but left per raw query
+     ?parent p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 .
   }
 
   ?child p:P27 [ ps:P27 ?country ] .
