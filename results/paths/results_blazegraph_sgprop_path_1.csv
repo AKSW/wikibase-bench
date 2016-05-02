@@ -1,0 +1,20 @@
+BEGIN: 2016-04-28 15:52:44 -0300
+sgprop,path_1,0,7.799388034,125,200
+sgprop,path_1,1,1.027979763,5,200
+sgprop,path_1,2,53.472433696,1032,200
+sgprop,path_1,3,1.128515397,8,200
+sgprop,path_1,4,0.226773194,2,200
+sgprop,path_1,5,0.524196277,3,200
+sgprop,path_1,6,22.398315707,812,200
+sgprop,path_1,7,0.683894168,6,200
+sgprop,path_1,8,120.100368275,,timeout
+sgprop,path_1,9,120.121848476,,timeout
+sgprop,path_1,10,120.101818987,,timeout
+sgprop,path_1,11,120.09440606,,timeout
+sgprop,path_1,12,120.119823046,,timeout
+sgprop,path_1,13,120.121931203,,timeout
+sgprop,path_1,14,120.119443163,,timeout
+sgprop,path_1,15,120.121823545,,timeout
+sgprop,path_1,16,120.109981085,,timeout
+sgprop,path_1,17,120.074386509,,timeout
+END: 2016-04-28 16:14:13 -0300
