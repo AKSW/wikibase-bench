@@ -3,7 +3,6 @@
 # Original source: https://www.mediawiki.org/wiki/Wikibase/Indexing/SPARQL_Query_Examples#US_presidents_and_spouses
 # 1) n-ary predicates
 PREFIX wd: <http://www.wikidata.org/entity/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX ps: <http://www.wikidata.org/prop/statement/>
 SELECT ?p ?pl ?ppicture ?w ?wl ?wpicture
@@ -14,6 +13,7 @@ WHERE {
   OPTIONAL { ?w rdfs:label ?wl . filter (lang(?wl) = "en"). }
   OPTIONAL {
     ?p p:P18 [ ps:P18 ?ppicture ] .
-	  ?w p:P18 [ ps:P18 ?wpicture ] .
+    ?w p:P18 [ ps:P18 ?wpicture ] .
   }
 }
+LIMIT 10
