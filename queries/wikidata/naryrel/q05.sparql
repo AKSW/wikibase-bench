@@ -18,7 +18,6 @@ WHERE
 	 ?child p:P25 [ ps:P25 ?parent ] .
      ?parent p:P39/ps:P39/(p:P279/ps:P279)* wd:Q83307 .
   }
-
   ?child p:P27 [ ps:P27 ?country ] .
   ?country p:P901 [ ps:P901 ?cc ] .
 }
