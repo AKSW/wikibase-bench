@@ -14,7 +14,7 @@ PATH_NUMBER = ARGV[1]
 DB = Sequel.connect('postgres://wikidata:wikidata@localhost/wikidata_enzo')
 
 paths = DB[:paths].
-#  where(size: PATH_LENGTH).
+  where(size: PATH_LENGTH).
   order(Sequel.lit('RANDOM()')).
   limit(PATH_NUMBER)
 
@@ -31,13 +31,28 @@ paths.each do |row|
       node[:property] = claim[:property]
       claims.reject!{|c| c[:claim_id] == claim[:claim_id]}.shuffle
     end
-    rand(3).times do
-      claim = claims.pop
-      node[:claims] << [claim[:property], claim[:valueitem]]
+    m = n = 0
+    while m + n == 0
+      m = rand(3)
+      n = rand(3)
     end
-    rand(3).times do
+    properties = []
+    while n+n > 0 and claims.size > 0 do
       claim = claims.pop
-      node[:claims] << [claim[:property], rand(2)]
+      unless properties.include?(claim[:property])
+        properties << claim[:property]
+        if rand(2) == 0
+          if m > 0
+            m -= 1
+            node[:claims] << [claim[:property], claim[:valueitem]]
+          end
+        else
+          if n > 0
+            n -= 1
+            node[:claims] << [claim[:property], rand(2)]
+          end
+        end
+      end
     end
     path << node
   end
