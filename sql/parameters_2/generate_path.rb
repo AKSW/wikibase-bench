@@ -13,6 +13,8 @@ PATH_NUMBER = ARGV[1]
 
 DB = Sequel.connect('postgres://wikidata:wikidata@localhost/wikidata_enzo')
 
+STDOUT.sync = true
+
 paths = DB[:paths].
   where(size: PATH_LENGTH).
   order(Sequel.lit('RANDOM()')).
@@ -22,8 +24,8 @@ paths.each do |row|
   nodes = row[:nodes][1...-1].split(',').reverse
   path = []
   while nodes.size > 0
-    node = {entity_id: node_id, claims: []}
     node_id = nodes.pop
+    node = {entity_id: node_id, claims: []}
     claims = DB[:claims].where(entity_id: node_id).exclude(valueitem: nil).select(:claim_id, :property, :valueitem).all
     if nodes.size > 0
       valueitem = nodes.last
@@ -54,7 +56,7 @@ paths.each do |row|
         end
       end
     end
-    path << node
+    path << node if n+n == 0
   end
-  puts path.to_json
+  puts path.to_json if path.size == PATH_LENGTH
 end
