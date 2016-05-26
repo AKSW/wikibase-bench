@@ -22,7 +22,7 @@ paths.each do |row|
   nodes = row[:nodes][1...-1].split(',').reverse
   path = []
   while nodes.size > 0
-    node = {claims: []}
+    node = {entity_id: node_id, claims: []}
     node_id = nodes.pop
     claims = DB[:claims].where(entity_id: node_id).exclude(valueitem: nil).select(:claim_id, :property, :valueitem).all
     if nodes.size > 0
