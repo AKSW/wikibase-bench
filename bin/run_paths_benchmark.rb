@@ -5,7 +5,7 @@ Usage: This script run queries against an endpoint using parameters that are
 set in the `CONFIG` variable loaded from a config file (for example config.rb).
 For example:
 
-$ bin/run_paths_benchmark.rb config/blazegraph_paths.rb
+$ bin/run_paths_benchmark.rb config/blazegraph_paths.rb [timeouts]
 EOS
 
 
@@ -18,6 +18,8 @@ unless defined? CONFIG
   puts USAGE
   exit 1
 end
+
+MAX_TIMEOUTS = ( ARGV[1].nil? ? nil : ARGV[0].to_i )
 
 STDOUT.sync = true
 
@@ -63,7 +65,9 @@ CONFIG[:schemas].each do |schema|
       query_file.close
       results.puts array.to_csv
       results.flush
-      break if timeouts == 10
+      unless MAX_TIMEOUTS.nil?
+        break if timeouts == MAX_TIMEOUTS
+      end
     end
     results.puts "END: #{Time.now.to_s}"
     results.close
