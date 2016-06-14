@@ -4,7 +4,7 @@ threads = []
 mutex = Mutex.new
 
 if ARGV.size != 1
-  puts 'usage: load_in_postgres.rb <directory>'
+  puts 'usage: translate_all.rb <directory>'
   exit 1
 end
 
