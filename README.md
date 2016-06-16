@@ -17,7 +17,6 @@ The code on this repository allows to:
 * Run the experiments.
 
 The principles and motivations of this code can be found in the paper.
-
 The steeps required to reproduce the experiments are described in
 <http://users.dcc.uchile.cl/~dhernand/wquery/>
 (DOI: <https://dx.doi.org/10.6084/m9.figshare.3219217.v3>).
