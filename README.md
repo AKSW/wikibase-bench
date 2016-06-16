@@ -2,7 +2,11 @@
 
 This repository contains the code necessary to execute the experiments
 associated with the paper
-"Querying Wikidata: Comparing SPARQL, Relational and Graph Databases".
+*"Querying Wikidata: Comparing SPARQL, Relational and Graph Databases"* by
+[Daniel Hernández](http://users.dcc.uchile.cl/~dhernand/),
+[Aidan Hogan](http://users.dcc.uchile.cl/~ahogan/),
+[Cristian Riveros](http://web.ing.puc.cl/~criveros/),
+Carlos Rojas and Enzo Zerega)..
 
 The code on this repository allows to:
 
