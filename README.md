@@ -6,7 +6,7 @@ associated with the paper
 [Daniel Hernández](http://users.dcc.uchile.cl/~dhernand/),
 [Aidan Hogan](http://users.dcc.uchile.cl/~ahogan/),
 [Cristian Riveros](http://web.ing.puc.cl/~criveros/),
-Carlos Rojas and Enzo Zerega)..
+Carlos Rojas and Enzo Zerega).
 
 The code on this repository allows to:
 
