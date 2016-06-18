@@ -1,8 +1,9 @@
 import json
 import codecs
+import os
 
-WIKIDATA_PATH         = '../Downloads/wikidata.json'
-OUTPUT_PATH           = './csv_light' #the folder must exist.
+WIKIDATA_PATH         = os.environ.get('DATASET_UNCOMPRESSED')
+OUTPUT_PATH           = os.environ.get('MODEL_LIGHT')
 
 def fix_string(s):
     return s.replace(',', '').replace('"', '').replace('\\', '').replace('\n', '')

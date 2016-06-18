@@ -1,11 +1,13 @@
 import json
 import codecs
 
-WIKIDATA_PATH          = '../Downloads/wikidata.json'
-OUTPUT_PATH            = './csv_complete' #the folder must exist.
-LANG_LABELS_PATH       = './language-labels'
-LANG_DESCRIPTIONS_PATH = './language-description'
-LANG_ALIASES_PATH      = './language-aliases'
+import os
+
+WIKIDATA_PATH          = os.environ.get('DATASET_UNCOMPRESSED')
+OUTPUT_PATH            = os.environ.get('MODEL_COMPLETE')
+LANG_LABELS_PATH       = os.environ.get('LANG_LABELS')
+LANG_DESCRIPTIONS_PATH = os.environ.get('LANG_DESCRIPTIONS')
+LANG_ALIASES_PATH      = os.environ.get('LANG_ALIASES')
 
 def fix_string(s):
     return s.replace(',', '').replace('"', '').replace('\\', '').replace('\n', '')

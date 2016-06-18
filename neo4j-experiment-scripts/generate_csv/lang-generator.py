@@ -1,10 +1,11 @@
 import json
 import codecs
+import os
 
-WIKIDATA_PATH         = '../Downloads/wikidata.json'
-LANG_LABELS_PATH      = './language-labels'
-LANG_DESCRIPTION_PATH = './language-description'
-LANG_ALIASES_PATH     = './language-aliases'
+WIKIDATA_PATH         = os.environ.get('DATASET_UNCOMPRESSED')
+LANG_LABELS_PATH      = os.environ.get('LANG_LABELS')
+LANG_DESCRIPTION_PATH = os.environ.get('LANG_DESCRIPTIONS')
+LANG_ALIASES_PATH     = os.environ.get('LANG_ALIASES')
 
 lang_labels       = []
 lang_descriptions = []
