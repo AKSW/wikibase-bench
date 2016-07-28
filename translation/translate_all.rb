@@ -11,7 +11,7 @@ end
 Dir["#{ARGV[0]}/*.json.gz"].sort.each do |gziped_file_name|
   file_name = gziped_file_name.sub(/.gz$/,'')
   system "gunzip -c #{gziped_file_name} > #{file_name}"
-  ['naryrel','ngraphs','sgprop','stdreif'].each do |mode|
+  ['naryrel','ngraphs','sgprop','stdreif','rdr'].each do |mode|
     threads << Thread.new do
       mutex.synchronize do
         puts "Processing #{file_name} (#{mode})"

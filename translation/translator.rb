@@ -1,6 +1,7 @@
 require 'set'
 require 'json'
 require 'rdf'
+require 'rdf/ntriples'
 include RDF
 
 class Translator
@@ -320,6 +321,8 @@ class Translator
         when :sgprop
           triples << [subject, statement, object]
           triples << [statement, @rdf.singletonPropertyOf, property]
+        when :rdr
+          rdr_triple = "<<"+triple_to_string([subject, property, object])+" >> "+triple_to_string([@wikibase.hasSID,statement])+" .\n" #todo check if to_s works
         when :ngraphs
           triples << [subject, property, object]
         end
@@ -334,8 +337,30 @@ class Translator
         end
 
         triples.each { |triple| triple << statement } if @mode == :ngraphs
-        triples.each { |triple| serialize triple }
+        triples.each { |triple| serialize triple } 
+        @file << rdr_triple if @mode == :rdr #write rdr triple directly to file
+             
       end
+    end
+  end
+  
+  def triple_to_stringb(triple)
+    output = RDF::Writer.for(:ntriples).buffer do |writer|
+      writer << triple  
+    end
+    return output.chomp.chomp('.') #cut off newline and .
+  end
+  
+  def triple_to_string(triple)
+    return "#{triple.map{|x| @writer.format_term(x)}.join(' ')}"
+  end
+  
+  def triples_to_string(triples)
+    output = RDF::Writer.for(:ntriples).buffer do |writer|
+      triples.each { |triple|
+              writer << triple
+              puts triple
+            } 
     end
   end
 
