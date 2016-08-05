@@ -1,6 +1,8 @@
 def properties(schema)
   if [:ngraphs, :ongraphs].include? schema
     "quads.properties"
+  elsif [:rdr, :ordr].include? schema
+     "rdr.properties"
   else
     "triples.properties"
   end
@@ -30,7 +32,7 @@ log = File.new('loading.log', 'a')
 if ARGV.size > 0
   schemas = [ARGV[0].to_sym]
 else
-  schemas = [:naryrel, :ngraphs, :sgprop, :stdreif]
+  schemas = [:naryrel, :ngraphs, :sgprop, :stdreif, :rdr]
 end
 
 schemas.each do |schema|
