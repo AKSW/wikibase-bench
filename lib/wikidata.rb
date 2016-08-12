@@ -91,6 +91,8 @@ module Wikidata
         prefix_list = [:wd, :p, :ps, :wikibase]
       when :ngraphs
         prefix_list = [:wd, :p]
+      when :rdr ,:ordr
+        prefix_list = [:wd, :p, :wikibase]
       when :sgprop
         prefix_list = [:wd, :rdf, :p]
       when :stdreif
@@ -169,12 +171,15 @@ module Wikidata
 
     def prefixes
       query = ''
+      if [:ordr, :rdr].include? @schema
+        query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
+      end
       if [:naryrel, :onaryrel, :ngraphs, :ongraphs].include? @schema
         if @mask[1] == '0' or @mask[3] == '0'
           query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
         end
       end
-      if [:naryrel, :onaryrel, :ngraphs, :ongraphs, :sgprop, :osgprop, :stdreif, :ostdreif].include? @schema
+      if [:naryrel, :onaryrel, :ngraphs, :ongraphs, :sgprop, :osgprop, :stdreif, :ostdreif, :ordr, :rdr].include? @schema
         if @mask[0] == '1' or @mask[2] == '1' or @mask[4] == '1'
           query += 'PREFIX wd: <http://www.wikidata.org/entity/> '
         end
@@ -199,7 +204,7 @@ module Wikidata
     def select_variables
       query = ''
       if @mask == '11111'
-        query += '* '
+        query += '* ' #rdr-tothink
       else
         query += '?s '  if @mask[0] == '0'
         query += '?p '  if @mask[1] == '0'
@@ -258,6 +263,23 @@ module Wikidata
           query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
           query += "}"
         end
+      when :rdr  #BIND( <<?i ?p ?o>> as ?st) .
+        query += "BIND  ( <<#{s[:s]} #{s[:p]} #{s[:o]} >> as ?st). ?st wikibase:hasSID ?c. ?c #{s[:q]} #{s[:qo]}  . "
+        query += "#{s[:p]} a wikibase:Property . " if @mask[1] == '0'
+        query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
+        #query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0' # we don't need that i think because it should already hold in rdr 
+      when :ordr
+        if @mask[3] == '1' or @mask[4] == '1'
+          query += QuinQueryBuilder.new(:rdr, @mask).graph_pattern(quin)
+        else
+          query += "{ BIND  ( <<#{s[:s]} #{s[:p]} #{s[:o]} >> as ?st). ?st wikibase:hasSID ?c. "
+          query += "#{s[:p]} a wikibase:Property . " if @mask[1] == '0'
+          #query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0' # we don't need that i think because it should already hold in rdr 
+          query += "} OPTIONAL { "
+          query += "GRAPH ?c { ?c #{s[:q]} #{s[:qo]} } . "
+          query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
+          query += "}"
+        end 
       when :sgprop
         query += "#{s[:s]} ?c #{s[:o]} . ?c rdf:singletonPropertyOf #{s[:p]} ; #{s[:q]} #{s[:qo]} . "
         query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
@@ -294,7 +316,8 @@ module Wikidata
         prefixes,
         'SELECT', select_variables,
         'WHERE {', graph_pattern(quin), '}',
-        'LIMIT', limit
+        'LIMIT', limit,
+        #'#', quin
       ].join(' ')
       Query.new query
     end
@@ -326,6 +349,8 @@ module Wikidata
         :naryrel
       when :ngraphs, :ongraphs
         :ngraphs
+      when :rdr, :ordr
+        :rdr
       when :sgprop, :osgprop
         :sgprop
       when :stdreif, :ostdreif

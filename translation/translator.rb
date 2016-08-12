@@ -322,7 +322,7 @@ class Translator
           triples << [subject, statement, object]
           triples << [statement, @rdf.singletonPropertyOf, property]
         when :rdr
-          rdr_triple = "<<"+triple_to_string([subject, property, object])+" >> "+triple_to_string([@wikibase.hasSID,statement])+" .\n" #todo check if to_s works
+          rdr_triple = "<<"+triple_to_string([subject, property, object])+" >> "+triple_to_string([@wikibase.hasSID,statement])+" .\n" #attach statement id as metadata value to rdr triple
         when :ngraphs
           triples << [subject, property, object]
         end
