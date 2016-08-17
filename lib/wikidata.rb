@@ -396,7 +396,7 @@ module Wikidata
         exec(['java', @app],
           '-Xmx6g',
           '-XX:+UseG1GC',
-          '-Djetty.overrideWebXml=override.xml',
+          #'-Djetty.overrideWebXml=override.xml',
           '-Dbigdata.propertyFile=server.properties',
           '-jar',
           'blazegraph.jar')

@@ -31,7 +31,7 @@ CONFIG[:schemas].each do |schema|
     puts "Starting server #{schema} #{mask} #{server_id}"
     server = CONFIG[:engine].new(schema, CONFIG[:homes][server_id])
     server.start
-    sleep 180
+    sleep 18#0
 
     # Run the queries for this mask
     builder = Wikidata::QuinQueryBuilder.new schema, mask
@@ -43,6 +43,7 @@ CONFIG[:schemas].each do |schema|
       puts "Executing query #{schema} #{mask} #{j}"
       query = builder.build quins[j], CONFIG[:max_solutions]
       result = query.run server, CONFIG[:client_timeout]
+        puts result
       array = [schema, mask, j, result[:time], nil, result[:status]]
       if result[:status] == '200'
         array[4] = Wikidata::Query.solutions(result)
