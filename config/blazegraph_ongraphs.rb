@@ -2,10 +2,10 @@
 
 CONFIG = {
   engine: Wikidata::Blazegraph,
-  schemas: [:onaryrel, :ongraphs, :osgprop, :ostdreif, :ordr, :fordr],
+  schemas: [: ongraphs],
   masks: (1..31).map { |i| "%05b" % i },
   quins: lambda { |mask| "query_parameters/quins/quins_#{mask}.csv" },
-  homes: [1,2],
+  homes: [1],
   queries: (0...300).to_a,
   max_solutions: 10000,
   client_timeout: 60,
