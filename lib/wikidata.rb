@@ -268,7 +268,7 @@ module Wikidata
         query += "#{s[:p]} a wikibase:Property . " if @mask[1] == '0'
         query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
         #query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0' # we don't need that i think because it should already hold in rdr 
-      when :ordr ,
+      when :ordr 
         if @mask[3] == '1' or @mask[4] == '1'
           query += QuinQueryBuilder.new(:rdr, @mask).graph_pattern(quin)
         else
