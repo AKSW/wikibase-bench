@@ -174,12 +174,12 @@ module Wikidata
       if [:ordr, :rdr, :frdr, :fordr].include? @schema
         query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
       end
-      if [:naryrel, :onaryrel, :ngraphs, :ongraphs].include? @schema
+      if [:naryrel, :onaryrel, :ngraphs, :ongraphs, :fngraphs, :fongraphs].include? @schema
         if @mask[1] == '0' or @mask[3] == '0'
           query += 'PREFIX wikibase: <http://wikiba.se/ontology-beta#> '
         end
       end
-      if [:naryrel, :onaryrel, :ngraphs, :ongraphs, :sgprop, :osgprop, :stdreif, :ostdreif, :ordr, :rdr, :frdr, :fordr].include? @schema
+      if [:naryrel, :onaryrel, :ngraphs, :ongraphs, :sgprop, :osgprop, :stdreif, :ostdreif, :ordr, :rdr, :frdr, :fordr, :fngraphs, :fongraphs].include? @schema
         if @mask[0] == '1' or @mask[2] == '1' or @mask[4] == '1'
           query += 'PREFIX wd: <http://www.wikidata.org/entity/> '
         end
@@ -263,6 +263,23 @@ module Wikidata
           query += "#{s[:q]} a wikibase:Property . " if @mask[3] == '0'
           query += "}"
         end
+      when :fngraphs
+        query += "GRAPH ?c { #{s[:s]} #{s[:p]} #{s[:o]} . ?c #{s[:q]} #{s[:qo]} } . "
+        query += "FILTER EXISTS {#{s[:p]} a wikibase:Property .} . " if @mask[1] == '0'
+        query += "FILTER EXISTS {#{s[:q]} a wikibase:Property .} . " if @mask[3] == '0' 
+        query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0'
+      when :fongraphs
+        if @mask[3] == '1' or @mask[4] == '1'
+          query += QuinQueryBuilder.new(:fngraphs, @mask).graph_pattern(quin)
+        else
+          query += "{ GRAPH ?c { #{s[:s]} #{s[:p]} #{s[:o]} } . "
+          query += "FILTER EXISTS {#{s[:q]} a wikibase:Property .} . " if @mask[1] == '0'
+          query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0'
+          query += "} OPTIONAL { "
+          query += "GRAPH ?c { ?c #{s[:q]} #{s[:qo]} } . "
+          query += "FILTER EXISTS {#{s[:q]} a wikibase:Property .} . " if @mask[3] == '0'
+          query += "}"
+        end    
       when :rdr  #BIND( <<?i ?p ?o>> as ?st) .
         query += "BIND  ( <<#{s[:s]} #{s[:p]} #{s[:o]} >> as ?st). ?st wikibase:hasSID ?c. ?c #{s[:q]} #{s[:qo]}  . "
         query += "#{s[:p]} a wikibase:Property . " if @mask[1] == '0'
@@ -290,7 +307,7 @@ module Wikidata
           query += QuinQueryBuilder.new(:frdr, @mask).graph_pattern(quin)
         else
           query += "{ BIND  ( <<#{s[:s]} #{s[:p]} #{s[:o]} >> as ?st). ?st wikibase:hasSID ?c. "
-          query += "#{s[:p]} a wikibase:Property . " if @mask[1] == '0'
+          query += "FILTER EXISTS {#{s[:p]} a wikibase:Property .} . " if @mask[1] == '0'
           #query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0' # we don't need that i think because it should already hold in rdr 
           query += "} OPTIONAL { "
           query += "?c #{s[:q]} #{s[:qo]} . "
@@ -364,7 +381,7 @@ module Wikidata
       case @schema
       when :naryrel, :onaryrel
         :naryrel
-      when :ngraphs, :ongraphs
+      when :ngraphs, :ongraphs, :fngraphs, :fongraphs
         :ngraphs
       when :rdr, :ordr
         :rdr
