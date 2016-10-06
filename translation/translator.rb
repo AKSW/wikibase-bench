@@ -411,7 +411,7 @@ class Translator
     when 'time'
       value = mainsnak['datavalue']['value']
       pairs << [@rdf.type,                   @wikibase.TimeValue]
-      pairs << [@wikibase.timeValue,         RDF::Literal::DateTime.new(value['time'])]
+      pairs << [@wikibase.timeValue,         RDF::Literal::DateTime.new(value['time'].sub!(/^\+/, ''))]
       pairs << [@wikibase.timeTimeZone,      RDF::Literal::Integer.new(value['timezone'])]
       pairs << [@wikibase.timePrecision,     RDF::Literal::Integer.new(value['precision'])]
       pairs << [@wikibase.timeCalendarModel, RDF::URI.new(value['calendarmodel'])]
