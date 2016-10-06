@@ -19,6 +19,7 @@ Dir["#{ARGV[0]}/*.json.gz"].sort.each do |gziped_file_name|
 
       system "./translate.rb #{mode} #{file_name}"
       system "gzip #{file_name.sub(/.json$/,'')}-#{mode}.nq"
+      system "gzip #{file_name.sub(/.json$/,'')}-#{mode}.ntx"
     end
   end
 

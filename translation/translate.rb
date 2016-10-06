@@ -6,8 +6,12 @@ require './translator.rb'
 MODE = ARGV[0].to_sym
 
 i_file_name = ARGV[1]
+
+
+
+
 o_file_name = "#{i_file_name.sub(/.json$/,'')}-#{MODE}.nq" 
-o_file_name = "#{i_file_name.sub(/.json$/,'')}-#{MODE}.ntx" if @mode == :rdr
+o_file_name = "#{i_file_name.sub(/.json$/,'')}-#{MODE}.ntx" if MODE == :rdr
 
 #puts "converting #{i_file_name} -> #{o_file_name}"
 #STDOUT.flush
