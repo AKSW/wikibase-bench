@@ -273,7 +273,7 @@ module Wikidata
           query += QuinQueryBuilder.new(:fngraphs, @mask).graph_pattern(quin)
         else
           query += "{ GRAPH ?c { #{s[:s]} #{s[:p]} #{s[:o]} } . "
-          query += "FILTER EXISTS {#{s[:q]} a wikibase:Property .} . " if @mask[1] == '0'
+          query += "FILTER EXISTS {#{s[:p]} a wikibase:Property .} . " if @mask[1] == '0'
           query += "FILTER (#{s[:s]} != ?c) " if @mask[0] == '0'
           query += "} OPTIONAL { "
           query += "GRAPH ?c { ?c #{s[:q]} #{s[:qo]} } . "
