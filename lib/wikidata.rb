@@ -389,8 +389,15 @@ module Wikidata
         :rdr
       when :sgprop, :osgprop
         :sgprop
+      when :cpprop, :ocppprop
+        :cpprop
+      when :data, :odata
+        :data
+      when :dataonly, :odataonly
+        :dataonly
       when :stdreif, :ostdreif
         :stdreif
+      
       end
     end
 
@@ -430,7 +437,7 @@ module Wikidata
         $stdout.reopen("out.log", "w")
         $stderr.reopen("err.log", "w")
         exec(['java', @app],
-          '-Xmx6g',
+          '-server', '-Xmx6g',
           '-XX:+UseG1GC',
           #'-Djetty.overrideWebXml=override.xml',
           '-Dbigdata.propertyFile=server.properties',
@@ -445,7 +452,7 @@ module Wikidata
 
     def initialize(schema, id=1)
       super
-      @home = "/usr/local/virtuoso-opensource/var/lib/virtuoso/#{@home}"
+      @home = "/home/benchmark/data2/wikidata/wikibase-bench/dbfiles/virtuoso/sdw/#{@home}"
       @app  = 'virtuoso-t'
       @endpoint = 'http://localhost:8000/sparql/'
     end
