@@ -68,6 +68,7 @@ CONFIG[:schemas].each do |schema|
 		template.each do |queryinstance|
 		  j = queryinstance[1]
 		  query = URI.decode(queryinstance[2])
+		  query = Wikidata::Query.new query
 		  puts "Executing query #{schema} #{mask} #{j}"
 		  #puts query 
 		  #query = builder.build quins[j], CONFIG[:max_solutions]   
@@ -87,8 +88,8 @@ CONFIG[:schemas].each do |schema|
 		  results.puts array.to_csv
 		  results.flush
 
-		puts counts ##UNDO+
-		puts CONFIG[:queries].size
+		puts timeouts
+		#puts CONFIG[:queries].size
 		  counts += 1 
 		  if counts == CONFIG[:queries].size
 			break

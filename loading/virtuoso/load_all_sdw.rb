@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 MODE = ARGV[0]
-LOG  = File.new("loading.log", 'w')
+LOG  = File.new("loading.log", 'a')
 
 def virtuoso_run(script, mode)
   puts "Running #{script} (#{mode})"
@@ -14,7 +14,8 @@ def virtuoso_run(script, mode)
   LOG.flush
 end
 
-['cpprop','data','naryrel','ngraphs','sgprop','stdreif'].each do |mode|
+#['cpprop','data','naryrel','ngraphs','sgprop','stdreif'].each do |mode|
+['naryrel','ngraphs','stdreif'].each do |mode|
   puts "Starting server (#{mode})"
   system "cd /home/benchmark/data2/wikidata/wikibase-bench/dbfiles/virtuoso/sdw/db-#{mode}-1 && virtuoso-t"
   sleep 60
@@ -26,5 +27,5 @@ end
 
   puts "Stoping server (#{mode})"
   system "pidof virtuoso-t | xargs kill"
-  sleep 60
+  sleep 300
 end

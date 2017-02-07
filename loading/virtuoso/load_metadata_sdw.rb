@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 MODE = ARGV[0]
-LOG  = File.new("loading.log", 'w')
+LOG  = File.new("loading.log", 'a')
 
 def virtuoso_run(script, mode)
   puts "Running #{script} (#{mode})"

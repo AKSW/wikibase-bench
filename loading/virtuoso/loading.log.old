@@ -1,0 +1,8 @@
+Running disable_auto_indexing.sql (metadata)
+Elapsed time: 0.747226183 seconds
+Running setup_list_metadata_sdw.sql (metadata)
+Elapsed time: 0.721658806 seconds
+Running load_data.sql (metadata)
+Elapsed time: 0.769255107 seconds
+Running enable_auto_indexing.sql (metadata)
+Elapsed time: 0.732320527 seconds

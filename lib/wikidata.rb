@@ -419,7 +419,8 @@ module Wikidata
     end
 
     def url(query)
-      "#{@endpoint}?query=#{url_encode(query)}&timeout=#{CONFIG[:server_timeout]}&analytic=true"
+      "#{@endpoint}?query=#{url_encode(query)}&timeout=#{CONFIG[:server_timeout]}"
+     # "#{@endpoint}?query=#{url_encode(query)}&timeout=#{CONFIG[:server_timeout]}&analytic=true"
     end
 
     def properties
@@ -452,13 +453,14 @@ module Wikidata
 
     def initialize(schema, id=1)
       super
-      @home = "/home/benchmark/data2/wikidata/wikibase-bench/dbfiles/virtuoso/sdw/#{@home}"
+     # @home = "/home/benchmark/data2/wikidata/wikibase-bench/dbfiles/virtuoso/sdw/#{@home}"
+      @home = File.join('dbfiles',"#{CONFIG[:dbhome]}",@home)
       @app  = 'virtuoso-t'
       @endpoint = 'http://localhost:8000/sparql/'
     end
 
     def url(query)
-      "#{@endpoint}?query=#{url_encode(query)}"
+      "#{@endpoint}?query=#{url_encode(query)}&timeout=#{CONFIG[:server_timeout]*1000}"
     end
 
     def start
