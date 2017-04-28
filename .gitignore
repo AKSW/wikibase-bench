@@ -4,3 +4,4 @@ queries/quins-*
 *.log
 dbfiles/blazegraph/db-*1
 dbfiles/blazegraph/blazegraph.jar
+queries/*

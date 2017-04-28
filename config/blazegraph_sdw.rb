@@ -2,11 +2,12 @@
 
 CONFIG = {
   engine: Wikidata::Blazegraph,
+  dbfiles: 'sdw',
+  #schemas: [:data, :cpprop, :ngraphs, :rdr, :sgprop, :naryrel, :stdreif],
   schemas: [:naryrel],
- #schemas: [:data, :cpprop, :ngraphs, :rdr, :sgprop, :naryrel, :stdreif],
+  #templates: ['DBM-HAR-01','DBQ-HAR-01'],
+  templates: ['DBQ-HAR-01'],
   folder: '/home/benchmark/data2/wikidata/wikibase-bench/queries/sdw/',
- # masks: (1..31).map { |i| "%05b" % i },
- # quins: lambda { |mask| "query_parameters/quins/quins_#{mask}.csv" },
   homes: [1],
   queries: (0...40).to_a,
   max_solutions: 10000,

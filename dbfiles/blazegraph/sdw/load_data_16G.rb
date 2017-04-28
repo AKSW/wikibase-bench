@@ -8,6 +8,16 @@ def properties(schema)
   end
 end
 
+def fileformat(schema)
+  if [:ngraphs, :ongraphs].include? schema
+    "NQUADS"
+  elsif [:rdr, :ordr].include? schema
+    "NTRIPLES_RDR"
+  else
+    "NQUADS"
+  end
+end
+
 def load_data(schema, directory)
   database = "db-#{schema}-1"
   wikidata = File.absolute_path(directory)
@@ -21,8 +31,13 @@ def load_data(schema, directory)
     system "ln -s #{wikidata} wikidata"
   end
   t1 = Time.now
-  system "java -Xmx6g -cp blazegraph.jar com.bigdata.rdf.store.DataLoader -defaultGraph http://wikidata.org server.properties wikidata"
+  iotop = "iotop -a -o -b -t -d 60 > iotop-#{schema}.log &"
+  system iotop
+  comd =  "java -Xmx16g -cp blazegraph.jar com.bigdata.rdf.store.DataLoader -format #{fileformat(schema)} -defaultGraph http://wikidata.org server.properties wikidata"
+  puts comd
+  system comd
   t2 = Time.now
+  system "pkill iotop"
   Dir.chdir '..'
   t2-t1
 end

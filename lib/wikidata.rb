@@ -1,7 +1,7 @@
 require 'json'
 require 'erb'
 require 'net/http'
-include ERB::Util
+include ERB::Util 
 
 
 module Wikidata
@@ -30,19 +30,29 @@ module Wikidata
     end
 
     # Run a query against an endpoint.
-    def run(server, timeout)
+    def run(server, timeout, queryId=-1)
       http = Net::HTTP.new(URI.parse(server.endpoint).host, URI.parse(server.endpoint).port)
       http.open_timeout = 60
       http.read_timeout = timeout
       url = server.url(query)
-
+      #puts url ########      
+      
       t1 = Time.now
+      #puts "before get #{t1}#"  
       begin
-        resp = http.get(URI(url), {'Accept'=>'application/json'})
+        #resp = http.get(URI(url), {'Accept'=>'application/json'})
+        #resp = http.get(URI(url), {'Accept'=>'application/sparql-results+json'})
+          req  = Net::HTTP::Post.new(URI.parse(server.endpoint).path, initheader = {'Accept' =>'application/sparql-results+json'})
+          req.set_form_data(Hash[URI.decode_www_form(URI(url).query)])
+          #req.set_form_data({"query" => query})
+	  resp = http.request(req)
         t2 = Time.now
+	#puts "after get #{t2}#"  
         result = {time: t2-t1, body: resp.body, status: resp.code}
       rescue RuntimeError => e
         t2 = Time.now
+        #print server.list_queries ######listing active queries or deleting it
+        #puts "after get rescue #{t2}#"  
         result = {time: t2-t1, status: 'timeout', error: e}
       end
     end
@@ -374,7 +384,15 @@ module Wikidata
     def initialize(schema, id=1)
       @schema = schema
       @id     = id
-      @home   = "db-#{dbschema}-#{id}"
+      if CONFIG.key?(:dbfiles)
+          @home   = File.join(CONFIG[:dbfiles],"db-#{dbschema}-#{id}")
+      else
+          @home   = "db-#{dbschema}-#{id}"
+      end
+    end
+
+    def list_queries
+      s = ''
     end
 
     def dbschema
@@ -465,10 +483,49 @@ module Wikidata
 
     def start
       fork do
+		puts @home
         Dir.chdir @home
         $stdout.reopen("out.log", "w")
         $stderr.reopen("err.log", "w")
         exec @app
+      end
+    end
+
+  end
+
+  class Stardog < DBServer
+
+    def initialize(schema, id=1)
+      super
+      @home = File.join('dbfiles','stardog',"#{CONFIG[:dbhome]}",@home)
+      @app  = 'bin/stardog-admin server start --disable-security'
+      @endpoint = 'http://localhost:5820/kb/query'
+    end
+
+    def url(query)
+      "#{@endpoint}?query=#{url_encode(query)}&timeout=#{CONFIG[:server_timeout]*1000}"
+    end
+
+    def list_queries
+	dir = Dir.pwd
+        Dir.chdir @home
+        outp = %x[bin/stardog-admin query kill -a]
+	#outp = %x[bin/stardog-admin query list]
+	Dir.chdir dir	
+	return(outp)
+    end
+
+    def stop
+      system "bin/stardog-admin server stop"
+    end
+
+    def start
+      fork do
+        Dir.chdir @home
+        $stdout.reopen("out.log", "w")
+        $stderr.reopen("err.log", "w")
+	system 'bin/stardog-admin server stop'
+        system({"STARDOG_JAVA_ARGS" => "-Xmx32G -Xms30G -XX:MaxDirectMemorySize=32G"}, @app)
       end
     end
 

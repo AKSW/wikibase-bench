@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 USAGE = <<-EOS
-Usage: This script run queries against an endpoint using parameters that are
+Usage: This script runs a query against an endpoint using parameters that are
 set in the `CONFIG` variable loaded from a config file (for example config.rb).
 For example:
 
@@ -17,7 +17,17 @@ unless defined? CONFIG
   exit 1
 end
 
+if ARGV.size < 2
+  print "Usage: run_sdw_query.rb <config.rb> <format> <pattern> <instance> <isalive|keepalive>\n"
+  exit 1
+end
+
 STDOUT.sync = true
+
+CONFIG[:schemas]=[ARGV[1].to_sym]
+CONFIG[:templates]=[ARGV[2]]
+instance = ARGV[3]
+alive  = ARGV[4] #status wheter db is already online or shall be started (and terminated afterwards) for the query or whete it shall be started but not terminated after query finished
 
 CONFIG[:schemas].each do |schema|
   k = 0
@@ -51,27 +61,34 @@ CONFIG[:schemas].each do |schema|
 
 		if (CONFIG.key?(:templates) and not( CONFIG[:templates].include? mask))
 			next
-			puts "Skipping #{schema} #{mask} #{server_id}"
+			#puts "Skipping #{schema} #{mask} #{server_id}"
 		end
 
 		# Start server
+		
 		server_id = k % CONFIG[:homes].size
-		puts "Starting server #{schema} #{mask} #{server_id}"
 		server = CONFIG[:engine].new(schema, CONFIG[:homes][server_id]) 
-		server.start 
-		ti= CONFIG.key?(:startsleep) ? CONFIG[:startsleep] : 120
-		sleep ti
+		if(alive!='isalive')
+			puts "Starting server #{schema} #{mask} #{server_id}"
+			server.start 
+			sleep 60 
+		end  
+		
 		# Run the queries for this mask
 		#builder = Wikidata::QuinQueryBuilder.new schema, mask
 
 		engine_codename = CONFIG[:engine].name.downcase.sub(/^wikidata::/,'')
-		results = File.new("results_sdw_#{engine_codename}_#{schema}_#{mask}.csv", 'a')
-		results.puts "BEGIN: #{Time.now.to_s}"
+		
+		#results.puts "BEGIN: #{Time.now.to_s}"
 
 		timeouts = 0
 		counts = 0
 		template.each do |queryinstance|
 		  j = queryinstance[1]
+		  if (j!=instance)
+			next
+		  end
+		  results = File.new("sdw_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.csv", 'w')
 		  query = URI.decode(queryinstance[2])
 		  query = Wikidata::Query.new query
 		  puts "Executing query #{schema} #{mask} #{j}"
@@ -79,20 +96,20 @@ CONFIG[:schemas].each do |schema|
 		  #query = builder.build quins[j], CONFIG[:max_solutions]   
 
 		  result = query.run server, CONFIG[:client_timeout]
-			#puts result
 		  array = [schema, mask, j, result[:time], nil, result[:status]]
 		  if result[:status] == '200'
 			array[4] = Wikidata::Query.solutions(result)
-			body_file = File.new("results/solutions/quins/body_sdw_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
+			body_file = File.new("sdw_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.json", 'w')
 			body_file.puts result[:body]
 			body_file.close
 		  end
-		  query_file = File.new("results/queries/quins/query_sdw_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.sparql", 'w')
+		  query_file = File.new("sdw_#{engine_codename}_#{schema}_#{mask}_#{'%03i' % j}.sparql", 'w')
 		  query_file.puts query.to_s
 		  query_file.close
 		  results.puts array.to_csv
+		  puts array.to_csv
 		  results.flush
-
+		  results.close
 		puts timeouts
 		#puts CONFIG[:queries].size
 		  counts += 1 
@@ -109,16 +126,19 @@ CONFIG[:schemas].each do |schema|
 =end
 		end
 
-		results.puts "END: #{Time.now.to_s}"
-		results.close
+		#results.puts "END: #{Time.now.to_s}"
+		#results.close
 
 		# Stop server
-		puts 'Stoping server'
-		server.stop
+		if((alive!='isalive') || ( alive!='keepalive'))
+			puts 'Stoping server'
+			server.stop
 
-		sleep 120 
+			sleep 20 
+		end
 
 		k += 1
 	  end
 	end
 end
+

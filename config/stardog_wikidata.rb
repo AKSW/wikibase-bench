@@ -1,11 +1,10 @@
-# This file provides a configuration for blazegraph:
+# This file provides a configuration for stardog:
 
 CONFIG = {
-  engine: Wikidata::Virtuoso,
+  engine: Wikidata::Stardog,
   dbfiles: 'wikidata',
-  #schemas: [ :ongraphs, :osgprop, :onaryrel, :ostdreif, :fongraphs],
-  schemas: [ :osgprop, :onaryrel, :ostdreif, :fongraphs],
-  dbhome: 'virtuoso',
+  #schemas: [:ongraphs, :osgprop, :onaryrel, :ostdreif, :fongraphs],
+  schemas: [:fongraphs],
   masks: (1..31).map { |i| "%05b" % i },
   quins: lambda { |mask| "query_parameters/quins/quins_#{mask}.csv" },
   homes: [1],

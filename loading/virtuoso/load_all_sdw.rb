@@ -15,9 +15,10 @@ def virtuoso_run(script, mode)
 end
 
 #['cpprop','data','naryrel','ngraphs','sgprop','stdreif'].each do |mode|
-['naryrel','ngraphs','stdreif'].each do |mode|
+['data'].each do |mode|
   puts "Starting server (#{mode})"
-  system "cd /home/benchmark/data2/wikidata/wikibase-bench/dbfiles/virtuoso/sdw/db-#{mode}-1 && virtuoso-t"
+  #system "cd /home/benchmark/data2/wikidata/wikibase-bench/dbfiles/virtuoso/sdw/db-#{mode}-1 && virtuoso-t"
+  system "cd ../../dbfiles/virtuoso/sdw/db-#{mode}-1 && virtuoso-t"
   sleep 60
 
   virtuoso_run("disable_auto_indexing.sql", mode)

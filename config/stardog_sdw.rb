@@ -1,12 +1,11 @@
-# This file provides a configuration for blazegraph:
+# This file provides a configuration for stardog:
 
 CONFIG = {
-  engine: Wikidata::Virtuoso,
+  engine: Wikidata::Stardog,
   dbfiles: 'sdw',
-  dbhome: 'virtuoso',
   #schemas: [:data, :cpprop, :ngraphs, :sgprop, :naryrel, :stdreif],
-  schemas: [:sgprop, :naryrel, :stdreif],
-  templates: ['DBM-HAR-01','DBQ-HAR-01','DBM-SIM-02','DBQ-SIM-02'],
+  schemas: [:sgprop],
+  templates: ['DBM-HAR-02','DBQ-HAR-02'],
   folder: '/home/benchmark/data2/wikidata/wikibase-bench/queries/sdw/',
   homes: [1],
   queries: (0...40).to_a,
